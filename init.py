@@ -157,8 +157,8 @@ def get_content_draft (collection, platform, release, component, dbaas):
     content_draft = []
     dbaas_dict = {"platform": platform, "release": release, "component": component}
     doc = dbaas[collection].find_one(dbaas_dict)
-    content_draft.append(doc["commands"])
-    content_draft.append(doc["links"])
+    content_draft.append(doc.get("commands"))
+    content_draft.append(doc.get()"links"))
 
     return content_draft
 
@@ -172,7 +172,7 @@ def get_content_final (collection, platform, release, component, dbaas):
     lnks = []
 
     dbaas_dict = {"platform": platform, "release": release, "component": component}
-    for item in dbaas[collection].find(dbaas_dict):
+    for item in dbaas[collection].find_one(dbaas_dict):
         if "commands" in item.keys():
             cmd = item["commands"]
         if "links" in item.keys():
@@ -224,8 +224,8 @@ def get_diff (collection, platform, release, component, dbaas):
 
     if dbaas[original_collection].count(dbaas_dict) != 0:
         doc = dbaas[collection].find_one(dbaas_dict)
-        diff.append(doc["commands"])
-        diff.append(doc["links"])
+        diff.append(doc.get("commands"))
+        diff.append(doc.get("links"))
     else:
         diff.append("There is no existing document for requested combination platform/release/component" )
 
@@ -287,21 +287,20 @@ def approve(collection, platform, release, component, commands, links, dbaas):
 
 def reject(collection, platform, release, component, dbaas):
     """
-    approve new document in MongoDB by moving draft document into
-    main collection
+    delete draft document from appropriate collection
     """
-    update_result = ["TBD"]
+    update_result = []
 
-    # if "-draft" not in collection.lower():
-    #     target_collection = collection.lower() + "-draft"
-    # else:
-    #     target_collection = collection.lower()
-    #
-    # dbaas_dict = {"platform": platform, "release": release, "component": component}
-    # update = dbaas[target_collection].delete_one(dbaas_dict)
-    # if update.deleted_count:
-    #     update_result.append("Document {} - {} - {} has been removed".format(platform, release, component))
-    # else:
-    #     update_result.append("Document {} - {} - {} was not deleted properly".format(platform, release, component)")
+    if "-draft" not in collection.lower():
+        target_collection = collection.lower() + "-draft"
+    else:
+        target_collection = collection.lower()
+
+    dbaas_dict = {"platform": platform, "release": release, "component": component}
+    update = dbaas[target_collection].delete_one(dbaas_dict)
+    if update.deleted_count:
+        update_result.append("Document {} - {} - {} has been deleted".format(platform, release, component))
+    else:
+        update_result.append("Document {} - {} - {} was not deleted properly or does not exist".format(platform, release, component)")
 
     return update_result

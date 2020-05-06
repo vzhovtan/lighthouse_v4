@@ -103,9 +103,9 @@ $(document).ready(function(){
             //var post_data = {name: task_name, input: inputs};
             approve_content();
         } else if (action_name.includes('reject')){
-            //var inputs = {"action":"reject", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
-            //var post_data = {name: task_name, input: inputs};
-            reject_content();
+            var inputs = {"action":"reject", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
+            var post_data = {name: task_name, input: inputs};
+            reject_content(post_data);
         } else if (action_name.includes('result')){
             var inputs = {"action":"get_content_final", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
             var post_data = {name: task_name, input: inputs};
@@ -280,11 +280,11 @@ function create_new_component(collection_name, platform_name){
 
 function submit_new_content(post_data){
     $.post({url: link, dataType: "json", data: post_data})
-        .done(function(result){
+    .done(function(result){
         if(result.data.variables._0){
-            user_view_modal = PaneOpen(result.data.variables._0);
-            user_view_modal.show();
-            clear_new_platform_fields();
+          user_view_modal = PaneOpen(result.data.variables._0);
+          user_view_modal.show();
+          clear_new_platform_fields();
         }
     });
 }
@@ -294,19 +294,25 @@ function approve_content(){
   user_view_modal.show();
 }
 
-function reject_content(){
-  user_view_modal = PaneOpen("Function reject called and executed");
-  user_view_modal.show();
+function reject_content(post_data){
+    $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+        if(result.data.variables._0){
+          user_view_modal = PaneOpen(result.data.variables._0);
+          user_view_modal.show();
+          clear_all();
+        }
+    });
 }
 
 function update_content(){
-  user_view_modal = PaneOpen("Function update called and executed");
-  user_view_modal.show();
+    user_view_modal = PaneOpen("Function update called and executed");
+    user_view_modal.show();
 }
 
 function view_diff(post_data){
     $.post({url: link, dataType: "json", data: post_data})
-        .done(function(result){
+    .done(function(result){
         if(result.data.variables._0.includes('existing document')){
           user_view_modal = PaneOpen(result.data.variables._0);
           user_view_modal.show();
