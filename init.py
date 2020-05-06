@@ -172,11 +172,9 @@ def get_content_final (collection, platform, release, component, dbaas):
     lnks = []
 
     dbaas_dict = {"platform": platform, "release": release, "component": component}
-    for item in dbaas[collection].find_one(dbaas_dict):
-        if "commands" in item.keys():
-            cmd = item["commands"]
-        if "links" in item.keys():
-            lnks = item["links"]
+    doc = dbaas[collection].find_one(dbaas_dict)
+    cmd = doc.get("commands")
+    lnks = doc.get("links")
 
     content_final += "</div><br></div><div align='left'><img src='https://i.imgur.com/f0vBigO.jpg' alt=''></div>"
     content_final += "<div style='text-align:center'><h6>" + platform.upper() + " - " + release + " - " + component.upper() + "</h6></div>"

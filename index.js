@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    console.log("version 24");
     get_collection_list();
     clear_all();
     $("#about").hide();
@@ -93,11 +94,6 @@ $(document).ready(function(){
         var release_name = $( this ).attr("id").toLowerCase().split("_")[2];
         var component_name = $( this ).attr("id").toLowerCase().split("_")[3];
         var action_name = $( this ).text().toLowerCase();
-        console.log(collection_name);
-        console.log(platform_name);
-        console.log(release_name);
-        console.log(component_name);
-        console.log(action_name);
         if (action_name.includes('approve')){
             //var inputs = {"action":"approve", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
             //var post_data = {name: task_name, input: inputs};
@@ -105,17 +101,19 @@ $(document).ready(function(){
         } else if (action_name.includes('reject')){
             var inputs = {"action":"reject", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
             var post_data = {name: task_name, input: inputs};
-            reject_content(post_data);
+            reject_content(collection_name, platform_name, release_name, post_data);
         } else if (action_name.includes('result')){
-            var inputs = {"action":"get_content_final", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
-            var post_data = {name: task_name, input: inputs};
-            get_content_final(post_data);
+            //var inputs = {"action":"get_content_final", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
+            //var post_data = {name: task_name, input: inputs};
+            //get_content_final(post_data);
+            get_user_view();
         } else if (action_name.includes('update')){
             update_content();
         } else {
             var inputs = {"action":"get_diff", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
             var post_data = {name: task_name, input: inputs};
-            view_diff(post_data);
+            get_diff_data(post_data);
+            //get_diff_view();
         }
 
     });
@@ -197,21 +195,25 @@ function get_content_admin(collection_name, platform_name, release_name, compone
     $.post({url: link, dataType: "json", data: post_data})
         .done(function(result){
         if(result.data.variables._0.includes("admin")){
-            $("#label_new_links").show();
-            $("#label_new_commands").show();
-            $("#new_links").show();
-            $("#new_commands").show();
-            $.each(result.data.variables._1, function(val, text) {
-                $('#new_commands').val($('#new_commands').val() + text + "\n")
-            });
-            $.each(result.data.variables._2, function(val, text) {
-                $('#new_links').val($('#new_links').val() + text + "\n")
-            });
+            if(result.data.variables._1){
+                $("#label_new_commands").show();
+                $("#new_commands").show();
+                $.each(result.data.variables._1, function(val, text) {
+                    $('#new_commands').val($('#new_commands').val() + text + "\n")
+                });
+            }
+            if (result.data.variables._2){
+                $("#label_new_links").show();
+                $("#new_links").show();
+                $.each(result.data.variables._2, function(val, text) {
+                    $('#new_links').val($('#new_links').val() + text + "\n")
+                });
+            }
             $("#admin_button").show();
               adm_btns.forEach(function(item){
                  $("#admin_button").append("<button class='btn btn--release'id='" + collection_name + "_" + platform_name + "_" + release_name + "_" + component_name + "'>" + item + "</button>");
               });
-           } else {
+        } else {
             user_view_modal = PaneOpen(result.data.variables._1);
             user_view_modal.show();
            }
@@ -220,24 +222,26 @@ function get_content_admin(collection_name, platform_name, release_name, compone
 
 function get_content_draft(collection_name, platform_name, release_name, component_name, post_data){
     $.post({url: link, dataType: "json", data: post_data})
-        .done(function(result){
-        if(result.data.variables._0 || result.data.variables._1){
-          $("#label_new_links").show();
+    .done(function(result){
+        if(result.data.variables._0){
           $("#label_new_commands").show();
-          $("#new_links").show();
           $("#new_commands").show();
           $.each(result.data.variables._0, function(val, text) {
               $('#new_commands').val($('#new_commands').val() + text + "\n")
           });
+        }
+        if(result.data.variables._1) {
+          $("#label_new_links").show();
+          $("#new_links").show();
           $.each(result.data.variables._1, function(val, text) {
               $('#new_links').val($('#new_links').val() + text + "\n")
           });
-          $("#admin_button").show();
-          adm_draft_btns.forEach(function(item){
-            $("#admin_button").append("<button class='btn btn--release'id='" + collection_name + "_" + platform_name + "_" + release_name + "_" + component_name + "'>" + item + "</button>");
-          });
-      }
-  });
+        }
+        $("#admin_button").show();
+        adm_draft_btns.forEach(function(item){
+          $("#admin_button").append("<button class='btn btn--release'id='" + collection_name + "_" + platform_name + "_" + release_name + "_" + component_name + "'>" + item + "</button>");
+        });
+    });
 }
 
 function create_new_platform(collection_name){
@@ -294,13 +298,17 @@ function approve_content(){
   user_view_modal.show();
 }
 
-function reject_content(post_data){
+function reject_content(collection_name, platform_name, release_name, post_data){
     $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
+          clear_all();
+          $("#component").empty();
+          var inputs = {"action":"get_component_list", "collection":collection_name, "platform":platform_name, "release":release_name};
+          var comp_post_data = {name: task_name, input: inputs};
+          get_component_list(collection_name, platform_name, release_name, comp_post_data);
           user_view_modal = PaneOpen(result.data.variables._0);
           user_view_modal.show();
-          clear_all();
         }
     });
 }
@@ -310,7 +318,12 @@ function update_content(){
     user_view_modal.show();
 }
 
-function view_diff(post_data){
+function get_user_view(){
+    user_view_modal = PaneOpen("Function get_user_view called and executed");
+    user_view_modal.show();
+}
+
+function get_diff_data(post_data){
     $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0.includes('existing document')){
@@ -329,6 +342,11 @@ function view_diff(post_data){
             });
         }
     });
+}
+
+function get_diff_view(){
+    user_view_modal = PaneOpen("Function get_diff_view called and executed");
+    user_view_modal.show();
 }
 
 function clear_all(){
