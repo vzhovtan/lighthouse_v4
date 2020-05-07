@@ -65,6 +65,9 @@ def task(env, action, collection="None", platform="None", release="None", compon
     elif backend_action =="approve":
         update = approve(collection, platform, release, component, commands, links, dbaas)
         result.append(update)
+    elif backend_action =="update":
+        update = update(collection, platform, release, component, commands, links, dbaas)
+        result.append(update)
     elif backend_action =="reject":
         update = reject(collection, platform, release, component, dbaas)
         result.append(update)
@@ -280,6 +283,24 @@ def approve(collection, platform, release, component, commands, links, dbaas):
     #     update_result.append("Document {} - {} - {} approved".format(platform, release, component))
     # else:
     #     update_result.append("Document {} - {} - {} was not deleted properly".format(platform, release, component)")
+
+    return update_result
+
+def update(collection, platform, release, component, commands, links, dbaas):
+    """
+    update document by deletion of the old one and submitting the new one
+    """
+    update_result = []
+    submitted_doc["platform"], submitted_doc["release"], submitted_doc["component"], submitted_doc["commands"], submitted_doc["links"] = platform.lower(), "software independent", \
+	component.lower(), commands.split("\n"), links.split("\n")
+
+    dbaas_dict = {"platform": platform, "release": release, "component": component}
+    update = dbaas[collection].delete_one(dbaas_dict)
+    if update.deleted_count:
+        dbaas[collection].insert_one(submitted_doc)
+        update_result.append("Document {} - {} updated".format(platform, component))
+    else:
+        update_result.append("Document {} - {} - {} was not updated properly".format(platform, release, component)")
 
     return update_result
 
