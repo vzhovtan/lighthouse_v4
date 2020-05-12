@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    console.log("version 33");
+    console.log("version 36");
     get_collection_list();
     clear_all();
     $("#about").hide();
@@ -322,14 +322,14 @@ function update_content (collection_name, platform_name, release_name, component
     console.log("Function update called");
     var command = $(cmds_field).val();
     var links = $(lnks_field).val();
-    var inputs = {"action":"update", "collection":collection_name, "platform":platform_name, "release":release_name, "component":new_component, "commands":command, "links":links};
+    var inputs = {"action":"update", "collection":collection_name, "platform":platform_name, "release":release_name, "component":component_name, "commands":command, "links":links};
     var post_data = {name: task_name, input: inputs};
     $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
            console.log(result.data.variables._0);
            openModal(result.data.variables._0);
-           reset_all();
+           clear_all();
          }
      });
 }
