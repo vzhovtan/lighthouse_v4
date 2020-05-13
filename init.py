@@ -224,7 +224,7 @@ def get_diff (collection, platform, release, component, dbaas):
     dbaas_dict = {"platform": platform, "release": release, "component": component}
 
     if dbaas[original_collection].count(dbaas_dict) != 0:
-        doc = dbaas[collection].find_one(dbaas_dict)
+        doc = dbaas[original_collection].find_one(dbaas_dict)
         diff.append(doc.get("commands"))
         diff.append(doc.get("links"))
     else:
