@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    console.log("version 38");
+    console.log("version 39");
     get_collection_list();
     clear_all();
     $("#about").hide();
@@ -413,9 +413,6 @@ function get_diff_data(post_data){
 
 function get_diff_view(){
     console.log("get_diff_view called")
-    Array.prototype.diff = function(a) {
-        return this.filter(function(i) {return a.indexOf(i) < 0;});
-    }
     var orig_command = $("#original_commands").val();
     var orig_links = $("#original_links").val();
     var new_command = $("#new_commands").val();
@@ -424,8 +421,11 @@ function get_diff_view(){
     console.log(orig_links)
     console.log(new_command)
     console.log(new_links)
-    var cmd_diff_new_orig = new_command.diff(orig_command)
-    console.log(cmd_diff_new_orig)
+    // Array.prototype.diff = function(a) {
+    //     return this.filter(function(i) {return a.indexOf(i) < 0;});
+    // };
+    //var cmd_diff_new_orig = new_command.diff(orig_command);
+    //console.log(cmd_diff_new_orig);
 }
 
 function clear_all(){
