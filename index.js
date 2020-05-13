@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    console.log("version 39");
+    console.log("version 41");
     get_collection_list();
     clear_all();
     $("#about").hide();
@@ -110,7 +110,7 @@ $(document).ready(function(){
             var cmds_field = "#original_commands";
             var lnks_field = "#original_links";
             update_content(collection_name, platform_name, release_name, component_name, cmds_field, lnks_field);
-        } else if (action_name.includes('review')){
+        } else if (action_name.includes('preview')){
             var cmds_field = "#new_commands";
             var lnks_field = "#new_links";
             get_user_view(platform_name, release_name, component_name, cmds_field, lnks_field);
@@ -130,7 +130,7 @@ $(document).ready(function(){
 
 var link = '/api/v2/jobs/lighthouse_v41_backend';
 var task_name = "lighthouse_v41_backend";
-var adm_draft_btns = ["Approve", "Reject", "Get diff", "Review"];
+var adm_draft_btns = ["Approve", "Reject", "Get diff", "Preview"];
 var adm_btns = ["Update", "View final result"];
 
 function get_collection_list(){
@@ -421,11 +421,26 @@ function get_diff_view(){
     console.log(orig_links)
     console.log(new_command)
     console.log(new_links)
-    // Array.prototype.diff = function(a) {
-    //     return this.filter(function(i) {return a.indexOf(i) < 0;});
-    // };
-    //var cmd_diff_new_orig = new_command.diff(orig_command);
-    //console.log(cmd_diff_new_orig);
+    console.log(arr_diff(orig_command, new_command))
+    console.log(arr_diff(orig_links, new_links))
+}
+
+function arr_diff (a1, a2) {
+    var a = [], diff = [];
+    for (var i = 0; i < a1.length; i++) {
+      a[a1[i]] = true;
+    }
+    for (var i = 0; i < a2.length; i++) {
+      if (a[a2[i]]) {
+          delete a[a2[i]];
+      } else {
+          a[a2[i]] = true;
+      }
+    }
+    for (var k in a) {
+      diff.push(k);
+    }
+    return diff;
 }
 
 function clear_all(){
