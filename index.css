@@ -1,34 +1,49 @@
 .cui .btn.btn--platform {
-      border: 1px solid transparent;
-      background: #049fd9;
-      color: #fff;
-      margin: 10px;
-      text-decoration: none;
+  border: 1px solid transparent;
+  background: #049fd9;
+  color: #fff;
+  margin: 10px;
+  text-decoration: none;
 }
 
 .cui .btn.btn--platform:hover{
-	  background:#005073;
-	  -webkit-transform: scale(1.3);
-	  -ms-transform: scale(1.3);
-	  transform: scale(1.3);
-	  cursor: pointer;
+  background:#005073;
+  -webkit-transform: scale(1.3);
+  -ms-transform: scale(1.3);
+  transform: scale(1.3);
+  cursor: pointer;
+}
+
+.cui .btn.btn--component {
+  border: 1px solid transparent;
+  background: #7DB7A5;
+  color: #fff;
+  margin: 10px;
+  text-decoration: none;
+}
+
+.cui .btn.btn--component:hover{
+  background:#405E55;
+  -webkit-transform: scale(1.3);
+  -ms-transform: scale(1.3);
+  transform: scale(1.3);
+  cursor: pointer;
 }
 
 .cui .btn.btn--release {
-      border: 1px solid transparent;
-      background: #abc233;
-      color: #39393b;
-      margin: 10px;
-      text-decoration: none;
-      box-shadow: inset 0 0 0 1px;
+  border: 1px solid transparent;
+  background: #AD9DA8;
+  color: #fff;
+  margin: 10px;
+  text-decoration: none;
   }
 
 .cui .btn.btn--release:hover{
-	  background: #339966;
-	  -webkit-transform: scale(1.2);
-	  -ms-transform: scale(1.2);
-	  transform: scale(1.2);
-	  cursor: pointer;
+  background:#585156;
+  -webkit-transform: scale(1.3);
+  -ms-transform: scale(1.3);
+  transform: scale(1.3);
+  cursor: pointer;
 }
 
 .cui .btn.btn--new {

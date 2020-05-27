@@ -1,0 +1,9 @@
+show logging
+show im database location all
+show interfaces
+show platform vm
+show tech dpa
+sh tech fabric
+sh tech ethernet interfaces
+show tech ethernet interface
+show tech bundle

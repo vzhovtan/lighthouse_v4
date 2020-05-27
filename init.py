@@ -32,12 +32,12 @@ def task(env, action, collection="None", platform="None", release="None", compon
     elif backend_action == "get_platform_list":
         platform_list = get_platform_list(collection, dbaas)
         result.append(platform_list)
-    elif backend_action == "get_release_list":
-        release_list = get_release_list(collection, platform, dbaas)
-        result.append(release_list)
     elif backend_action == "get_component_list":
-        component_list = get_component_list(collection, platform, release, dbaas)
+        component_list = get_component_list(collection, platform, dbaas)
         result.append(component_list)
+    elif backend_action == "get_release_list":
+        release_list = get_release_list(collection, platform, component, dbaas)
+        result.append(release_list)
     elif backend_action == "get_content_draft":
         content = get_content_draft(collection, platform, release, component, dbaas)
         for item in content:
@@ -104,11 +104,11 @@ def get_collection_list(admin_status, dbaas):
     collection_list = []
     if not admin_status:
         for item in dbaas.collection_names():
-            if item != "admin_list" and "-draft" not in item:
+            if item != "admin_list" and item != "usage-event" and item != "iosxr" and "commander" not in item and "-draft" not in item:
                 collection_list.append(item.lower())
     else:
         for item in dbaas.collection_names():
-            if item != "admin_list":
+            if item != "admin_list" and item != "usage-event" and item != "iosxr" and "commander" not in item:
                 collection_list.append(item.lower())
 
     collection_list.sort()
@@ -126,31 +126,31 @@ def get_platform_list(collection, dbaas):
     platform_list.sort()
     return platform_list
 
-def get_release_list(collection, platform, dbaas):
+def get_component_list(collection, platform, dbaas):
     """
-    get release list from MongoDB for specific collection/platform
-    """
-    release_list = []
-    dbaas_dict = {"platform": platform}
-    for item in dbaas[collection].find(dbaas_dict):
-        if item["release"].lower() not in release_list:
-            release_list.append(item["release"].lower())
-
-    release_list.sort()
-    return release_list
-
-def get_component_list(collection, platform, release, dbaas):
-    """
-    get component list from MongoDB for specific collection/platform/release
+    get component list from MongoDB for specific collection/platform
     """
     component_list = []
-    dbaas_dict = {"platform": platform, "release": release}
+    dbaas_dict = {"platform": platform}
     for item in dbaas[collection].find(dbaas_dict):
         if item["component"].lower() not in component_list:
             component_list.append(item["component"].lower())
 
     component_list.sort()
     return component_list
+
+def get_release_list(collection, platform, component, dbaas):
+    """
+    get release list from MongoDB for specific collection/platform/component
+    """
+    release_list = []
+    dbaas_dict = {"platform": platform, "component": component}
+    for item in dbaas[collection].find(dbaas_dict):
+        if item["release"].lower() not in release_list:
+            release_list.append(item["release"].lower())
+
+    release_list.sort()
+    return release_list
 
 def get_content_draft (collection, platform, release, component, dbaas):
     """
@@ -292,14 +292,14 @@ def update_existing_doc(collection, platform, release, component, commands, link
     """
     update_result = []
     submitted_doc = {}
-    submitted_doc["platform"], submitted_doc["release"], submitted_doc["component"], submitted_doc["commands"], submitted_doc["links"] = platform.lower(), "software independent", component.lower(), commands.split("\n"), links.split("\n")
+    submitted_doc["platform"], submitted_doc["release"], submitted_doc["component"], submitted_doc["commands"], submitted_doc["links"] = platform.lower(), release.lower(), component.lower(), commands.split("\n"), links.split("\n")
     dbaas_dict = {"platform": platform, "release": release, "component": component}
     update_feedback = dbaas[collection].delete_one(dbaas_dict)
     if update_feedback.deleted_count:
         dbaas[collection].insert_one(submitted_doc)
-        update_result.append("Document {} - {} updated".format(platform, component))
+        update_result.append("Document {} - {} - {} has been updated".format(platform, component, release))
     else:
-        update_result.append("Document {} - {} - {} was not updated properly".format(platform, release, component))
+        update_result.append("Document {} - {} - {} was not updated properly".format(platform, component, release))
 
     return update_result
 

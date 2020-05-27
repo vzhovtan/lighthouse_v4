@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    console.log("version 41");
+    console.log("version 49");
     get_collection_list();
     clear_all();
     $("#about").hide();
@@ -35,54 +35,55 @@ $(document).ready(function(){
 
     $('#platform').on( 'click', 'button', function() {
         clear_all();
-        $("#release").empty();
         $("#component").empty();
+        $("#release").empty();
         $("#platform > button").removeClass("btn--highlight");
         $(this).addClass("btn btn--highlight");
         var collection_name = $( this ).attr("id").toLowerCase();
         var platform_name = $( this ).text().toLowerCase();
         if(!platform_name.includes('create')){
-            var inputs = {"action":"get_release_list", "collection":collection_name, "platform":platform_name};
+            var inputs = {"action":"get_component_list", "collection":collection_name, "platform":platform_name};
             var post_data = {name: task_name, input: inputs};
-            get_release_list(collection_name, platform_name, post_data);
+            get_component_list(collection_name, platform_name, post_data);
         } else {
             create_new_platform(collection_name);
         }
     });
 
+    $('#component').on( 'click', 'button', function() {
+        clear_all();
+        $("#release").empty();
+        $("#component> button").removeClass("btn--highlight");
+        $(this).addClass("btn btn--highlight");
+        var collection_name = $( this ).attr("id").toLowerCase().split("_")[0];
+        var platform_name = $( this ).attr("id").toLowerCase().split("_")[1];
+        var component_name = $( this ).text().toLowerCase();
+        var inputs = {"action":"get_release_list", "collection":collection_name, "platform":platform_name, "component":component_name};
+        var post_data = {name: task_name, input: inputs};
+        if(!component_name.includes('create')){
+          get_release_list(collection_name, platform_name, component_name, post_data);
+        } else {
+          create_new_component(collection_name, platform_name);
+        }
+
+    });
+
     $('#release').on( 'click', 'button', function() {
         clear_all();
-        $("#component").empty();
         $("#release > button").removeClass("btn--highlight");
         $(this).addClass("btn btn--highlight");
         var collection_name = $( this ).attr("id").toLowerCase().split("_")[0];
         var platform_name = $( this ).attr("id").toLowerCase().split("_")[1];
+        var component_name = $( this ).attr("id").toLowerCase().split("_")[2];
         var release_name = $( this ).text().toLowerCase();
-        var inputs = {"action":"get_component_list", "collection":collection_name, "platform":platform_name, "release":release_name};
-        var post_data = {name: task_name, input: inputs};
-        get_component_list(collection_name, platform_name, release_name, post_data);
-    });
-
-    $('#component').on( 'click', 'button', function() {
-        clear_all();
-        $("#component > button").removeClass("btn--highlight");
-        $(this).addClass("btn btn--highlight");
-        var collection_name = $( this ).attr("id").toLowerCase().split("_")[0];
-        var platform_name = $( this ).attr("id").toLowerCase().split("_")[1];
-        var release_name = $( this ).attr("id").toLowerCase().split("_")[2];
-        var component_name = $( this ).text().toLowerCase();
-        if(!component_name.includes('create')){
-            if (collection_name.includes('draft')){
-              var inputs = {"action":"get_content_draft", "collection":collection_name, "platform":platform_name, "release":release_name, "component":component_name};
-              var post_data = {name: task_name, input: inputs};
-              get_content_draft(collection_name, platform_name, release_name, component_name, post_data);
-            } else {
-              var inputs = {"action":"get_content_admin", "collection":collection_name, "platform":platform_name, "release":release_name, "component":component_name};
-              var post_data = {name: task_name, input: inputs};
-              get_content_admin(collection_name, platform_name, release_name, component_name, post_data);
-            }
+        if (collection_name.includes('draft')){
+          var inputs = {"action":"get_content_draft", "collection":collection_name, "platform":platform_name, "release":release_name, "component":component_name};
+          var post_data = {name: task_name, input: inputs};
+          get_content_draft(collection_name, platform_name, release_name, component_name, post_data);
         } else {
-            create_new_component(collection_name, platform_name);
+          var inputs = {"action":"get_content_admin", "collection":collection_name, "platform":platform_name, "release":release_name, "component":component_name};
+          var post_data = {name: task_name, input: inputs};
+          get_content_admin(collection_name, platform_name, release_name, component_name, post_data);
         }
     });
 
@@ -91,8 +92,8 @@ $(document).ready(function(){
         $(this).addClass("btn btn--highlight");
         var collection_name = $( this ).attr("id").toLowerCase().split("_")[0];
         var platform_name = $( this ).attr("id").toLowerCase().split("_")[1];
-        var release_name = $( this ).attr("id").toLowerCase().split("_")[2];
-        var component_name = $( this ).attr("id").toLowerCase().split("_")[3];
+        var component_name = $( this ).attr("id").toLowerCase().split("_")[2];
+        var release_name = $( this ).attr("id").toLowerCase().split("_")[3];
         var action_name = $( this ).text().toLowerCase();
         if (action_name.includes('approve')){
             //var inputs = {"action":"approve", "collection":collection_name, "platform":platform_name, "release": release_name, "component": component_name};
@@ -151,7 +152,7 @@ function get_platform_list(collection_name, post_data){
         .done(function(result){
         if(result.data.variables._0){
             if (!collection_name.includes('-draft')){
-              $("#platform").append("<button class='btn btn--new' id='" + collection_name + "'>" + "Create new" + "</button>");
+              $("#platform").append("<button class='btn btn--new' id='" + collection_name + "'>" + "Create new platform" + "</button>");
             }
             result.data.variables._0.forEach(function(item){
                 $("#platform").append("<button class='btn btn--platform' id='" + collection_name + "'>" + item + "</button>");
@@ -160,26 +161,26 @@ function get_platform_list(collection_name, post_data){
     });
 }
 
-function get_release_list(collection_name, platform_name, post_data){
+function get_component_list(collection_name, platform_name, post_data){
     $.post({url: link, dataType: "json", data: post_data})
         .done(function(result){
         if(result.data.variables._0){
+            if (!collection_name.toLowerCase().includes('-draft')){
+              $("#component").append("<button class='btn btn--new' id='" + collection_name + "_" + platform_name + "'>" + "Create new component" + "</button>");
+            }
             result.data.variables._0.forEach(function(item){
-                $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "'>" + item.toLowerCase() + "</button>");
+                $("#component").append("<button class='btn btn--component' id='" + collection_name + "_" + platform_name + "'>" + item.toLowerCase() + "</button>");
             });
         }
     });
 }
 
-function get_component_list(collection_name, platform_name, release_name, post_data){
+function get_release_list(collection_name, platform_name, component_name, post_data){
     $.post({url: link, dataType: "json", data: post_data})
         .done(function(result){
         if(result.data.variables._0){
-            if (release_name.toLowerCase().includes('independent') && !collection_name.toLowerCase().includes('-draft')){
-              $("#component").append("<button class='btn btn--new' id='" + collection_name + "_" + platform_name + "_" + release_name + "'>" + "Create new" + "</button>");
-            }
             result.data.variables._0.forEach(function(item){
-                $("#component").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + release_name + "'>" + item.toUpperCase() + "</button>");
+                $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + item.toLowerCase() + "</button>");
             });
         }
     });
@@ -215,7 +216,7 @@ function get_content_admin(collection_name, platform_name, release_name, compone
             }
             $("#admin_button").show();
               adm_btns.forEach(function(item){
-                 $("#admin_button").append("<button class='btn btn--release'id='" + collection_name + "_" + platform_name + "_" + release_name + "_" + component_name + "'>" + item + "</button>");
+                 $("#admin_button").append("<button class='btn btn--release'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "'>" + item + "</button>");
               });
         } else {
             user_view_modal = PaneOpen(result.data.variables._1);
@@ -243,13 +244,20 @@ function get_content_draft(collection_name, platform_name, release_name, compone
         }
         $("#admin_button").show();
         adm_draft_btns.forEach(function(item){
-          $("#admin_button").append("<button class='btn btn--release'id='" + collection_name + "_" + platform_name + "_" + release_name + "_" + component_name + "'>" + item + "</button>");
+          $("#admin_button").append("<button class='btn btn--release'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "'>" + item + "</button>");
         });
     });
 }
 
 function create_new_platform(collection_name){
     clear_new_platform_fields();
+    $("#platform").empty();
+    $("#component").empty();
+    $("#release").empty();
+    $("#platform").hide();
+    $("#component").hide();
+    $("#release").hide();
+    $("#platform > button").removeClass("btn--highlight");
     $("#new_platform").show();
     $('#new_platform').on( 'click', 'button', function() {
         var new_platform = $("#new_platform_input").val();
@@ -269,6 +277,11 @@ function create_new_platform(collection_name){
 
 function create_new_component(collection_name, platform_name){
     clear_new_platform_fields();
+    $("#component").empty();
+    $("#release").empty();
+    $("#component").hide();
+    $("#release").hide();
+    $("#component> button").removeClass("btn--highlight");
     $("#new_platform_input").val(platform_name);
     $("#new_platform").show();
     $('#new_platform').on( 'click', 'button', function() {
@@ -290,6 +303,9 @@ function submit_new_content(post_data){
     $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
+          $("#platform").show();
+          $("#component").show();
+          $("#release").show();
           user_view_modal = PaneOpen(result.data.variables._0);
           user_view_modal.show();
           clear_new_platform_fields();
@@ -318,7 +334,6 @@ function reject_content(collection_name, platform_name, release_name, post_data)
 }
 
 function update_content (collection_name, platform_name, release_name, component_name, cmds_field, lnks_field){
-    console.log("Function update called");
     var command = $(cmds_field).val();
     var links = $(lnks_field).val();
     var inputs = {"action":"update", "collection":collection_name, "platform":platform_name, "release":release_name, "component":component_name, "commands":command, "links":links};
@@ -326,7 +341,8 @@ function update_content (collection_name, platform_name, release_name, component
     $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
-           console.log(result.data.variables._0);
+           $("#component > button").removeClass("btn--highlight");
+           $("#release > button").removeClass("btn--highlight");
            openModal(result.data.variables._0);
            clear_all();
          }
@@ -334,7 +350,6 @@ function update_content (collection_name, platform_name, release_name, component
 }
 
 function get_user_view(platform, release, component, cmds_field, lnks_field){
-    console.log ("Function get_user_view called")
     var content = "";
     var header = "</div><br></div><div align='left'><img src='https://i.imgur.com/f0vBigO.jpg' alt=''></div>";
     var footer = "</div><br></div><div align='left'><a href='mailto:lighthouse-csone@cisco.com?Subject=Lighthouse%20Feedback' target='_top'>comments/questions/feedbacks</a></div><br>";
@@ -412,36 +427,35 @@ function get_diff_data(post_data){
 }
 
 function get_diff_view(){
-    console.log("get_diff_view called")
-    var orig_command = $("#original_commands").val();
-    var orig_links = $("#original_links").val();
-    var new_command = $("#new_commands").val();
-    var new_links = $("#new_links").val();
-    console.log(orig_command)
-    console.log(orig_links)
-    console.log(new_command)
-    console.log(new_links)
-    console.log(arr_diff(orig_command, new_command))
-    console.log(arr_diff(orig_links, new_links))
+    var orig_command = $("#original_commands").val().split("\n");
+    var orig_links = $("#original_links").val().split("\n");
+    var new_command = $("#new_commands").val().split("\n");
+    var new_links = $("#new_links").val().split("\n");
+    console.log("+++ original cmd   --- new cmd")
+    console.log(array_diff(orig_command, new_command))
+    console.log("+++ original links   --- new links")
+    console.log(array_diff(orig_links, new_links))
+    console.log("+++ new cmd   --- original cmd")
+    console.log(array_diff(new_command, orig_command))
+    console.log("+++ new links   --- original links")
+    console.log(array_diff(new_links, orig_links))
 }
 
-function arr_diff (a1, a2) {
-    var a = [], diff = [];
-    for (var i = 0; i < a1.length; i++) {
-      a[a1[i]] = true;
+function array_diff (a1, a2) {
+  var a = [], diff = [];
+  for (var i = 0; i < a1.length; i++) {
+    a[a1[i]] = true;
+  }
+  for (var i = 0; i < a2.length; i++) {
+    if (a[a2[i]]) {
+      delete a[a2[i]];
     }
-    for (var i = 0; i < a2.length; i++) {
-      if (a[a2[i]]) {
-          delete a[a2[i]];
-      } else {
-          a[a2[i]] = true;
-      }
-    }
-    for (var k in a) {
-      diff.push(k);
-    }
-    return diff;
-}
+  }
+  for (var k in a) {
+    diff.push(k);
+  }
+  return diff;
+  }
 
 function clear_all(){
     clear_new_platform_fields()
