@@ -5,15 +5,15 @@
     <title>Lighthouse v4 Admin Portal</title>
     <link rel="shortcut icon" type="image/x-icon" href="https://scripts.cisco.com/app/cisco_ui_kit_1_2_2/img/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="https://scripts.cisco.com/app/cisco_ui_kit_1_2_2/css/cui-standard.min.css?v=1.00"  />
-    <link rel="stylesheet" href="index1.css">
-    <link rel="stylesheet" href="loading1.css">
+    <link rel="stylesheet" href="new_layout_index.css">
+    <link rel="stylesheet" href="new_layout_loading.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/picomodal/3.0.0/picoModal.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
-    <script type="text/javascript" src="index1.js"></script>
-    <script type="text/javascript" src="getters.js"></script>
-    <script type="text/javascript" src="setters.js"></script>
-    <script type="text/javascript" src="others.js"></script>
+    <script type="text/javascript" src="new_layout_getters.js"></script>
+    <script type="text/javascript" src="new_layout_setters.js"></script>
+    <script type="text/javascript" src="new_layout_other_func.js"></script>
+    <script type="text/javascript" src="new_layout_index.js"></script>
 </head>
 
 <body class="cui">
@@ -114,12 +114,12 @@
         </ul>
         <li>Grouping</li>
         <ul>
-          <li><i>(Ex:by hierarchy):<br>&emsp;show controllers fabric fia<br>&emsp;show controllers fabric fia link-status location []<br>&emsp;show controllers fabric fia stats<br>&emsp;show controllers fabric fia stats location []<br>&emsp;show controllers fabric fia drops [ ingress | egress ] loc[]
+          <li><i>(Ex:by hierarchy):<br>&emspshow controllers fabric fia<br>&emspshow controllers fabric fia link-status location []<br>&emspshow controllers fabric fia stats<br>&emspshow controllers fabric fia stats location []<br>&emspshow controllers fabric fia drops [ ingress | egress ] loc[]
           </i></li>
         </ul>
         <li>Dividing into sections could be accomplished to group certain collection of commands together by writing a title and using the colon symbol after the title/header:</li>
         <ul>
-          <li><i>Example:<br>&emsp;&emsp;show techs:<br>&emsp;&emsp;&emsp;show tech-support file [media-id]:[file-name]<br>&emsp;&emsp;&emsp;show tech routing bgp<br>&emsp;&emsp;&emsp;show tech multicast<br>&emsp;&emsp;traces:<br>&emsp;&emsp;&emsp;show tcp trace<br>&emsp;&emsp;&emsp;show ... trace
+          <li><i>Example:<br>&emsp&emspshow techs:<br>&emsp&emsp&emspshow tech-support file [media-id]:[file-name]<br>&emsp&emsp&emspshow tech routing bgp<br>&emsp&emsp&emspshow tech multicast<br>&emsp&emsptraces:<br>&emsp&emsp&emspshow tcp trace<br>&emsp&emsp&emspshow ... trace
           </i></li>
         </ul>
       </ul>
@@ -128,11 +128,11 @@
         <li>A header to the link is recommended to give a brief explanation of what the link contains.</li>
         <li>The header shall come prior to the link and separated by ’ >’ sign.</li>
         <ul>
-          <li><i>Example:<br>&emsp;Wiki - Fabric Driver > https://wiki.cisco.com/display/GSRIN/Fabric+Driver</i></li>
+          <li><i>Example:<br>&emspWiki - Fabric Driver > https://wiki.cisco.com/display/GSRIN/Fabric+Driver</i></li>
         </ul>
         <li>Email alias can be added. The ‘@’ sign has to be included for the system to recognize that it’s an email address and format correctly.</li>
         <ul>
-          <li><i>Example:<br>&emsp;cs-xr12000@cisco.com</i></li>
+          <li><i>Example:<br>&emspcs-xr12000@cisco.com</i></li>
         </ul>
       </ul>
     </div>
@@ -140,23 +140,23 @@
 </div>
 
 <!-- Section "platform list" -->
-<div class="container--platf_release" id="container_platform">
+<div id="container_platform">
   <div class="section">
     <div class="text-center" id="platform"></div>
   </div>
 </div>
 
 <!-- Section "component list" -->
-<div class="container--component" id="container_component">
+<div id="container_component">
   <div class="section">
-    <div class="text-center" id="release"></div>
+    <div class="text-center" id="component"></div>
   </div>
 </div>
 
 <!-- Section "release list" -->
-<div class="container--platf_release" id="container_release">
+<div id="container_release">
   <div class="section">
-    <div class="text-center" id="component"></div>
+    <div class="text-center" id="release"></div>
   </div>
 </div>
 

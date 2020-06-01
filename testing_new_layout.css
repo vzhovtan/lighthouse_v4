@@ -7,31 +7,16 @@
   overflow: auto;
   height:20%
  }
-  @media (min-width: 576px) {
-    .container {
-      max-width: 540px; } }
-  @media (min-width: 768px) {
-    .container {
-      max-width: 720px; } }
-  @media (min-width: 992px) {
-    .container {
-      max-width: 992px; } }
-  @media (min-width: 1200px) {
-    .container {
-      max-width: 1440px; } }
-  @media (min-width: 1440px) {
-    .container {
-      max-width: 2560px; } }
-  @media (min-width: 1600px) {
-    .container {
-      max-width: 2560px; } }
-  @media (min-width: 1840px) {
-    .container {
-      max-width: 2560px; } }
-  @media (min-width: 2100px) {
-    .container {
-      max-width: 2100px; } }
 
+ .container--platform_test {
+  width: 100%;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-right: auto;
+  margin-left: auto;
+  overflow: auto;
+  height:10%
+ }
 .container--component {
   width: 100%;
   padding-right: 10px;
@@ -41,30 +26,6 @@
   overflow: auto;
   height:40%
  }
-  @media (min-width: 576px) {
-    .container {
-      max-width: 540px; } }
-  @media (min-width: 768px) {
-    .container {
-      max-width: 720px; } }
-  @media (min-width: 992px) {
-    .container {
-      max-width: 992px; } }
-  @media (min-width: 1200px) {
-    .container {
-      max-width: 1440px; } }
-  @media (min-width: 1440px) {
-    .container {
-      max-width: 2560px; } }
-  @media (min-width: 1600px) {
-    .container {
-      max-width: 2560px; } }
-  @media (min-width: 1840px) {
-    .container {
-      max-width: 2560px; } }
-  @media (min-width: 2100px) {
-    .container {
-      max-width: 2100px; } }
 
 .cui .btn.btn--platform {
   border: 1px solid transparent;
