@@ -9,7 +9,8 @@ logger.setLevel(logging.DEBUG)
 def task(env, action, collection="None", platform="None", release="None", component="None", commands="None", links="None"):
     """
     1-Retreive the data from MongoDB and display with Admin Portal front-end
-    2-Retrive the data from MongoDB and display with BJB in CSOne front-end
+    2-Retrive the data from MongoDB and display with BJB in Lightning front-end
+    2-Retrive the data from MongoDB and display in Webex Teams Bot front-end
     3-Update MongoDb with data from Admin Portal front-end
     """
     result = bdblib.TaskResult()
@@ -19,8 +20,9 @@ def task(env, action, collection="None", platform="None", release="None", compon
     admin_status = get_admin_status(dbaas, userid)
     collection = collection.lower()
     platform = platform.lower()
-    release = release.lower()
     component = component.lower()
+    release = release.lower()
+    #All manually created document has release == release independent
 
     backend_action = action.lower()
     if backend_action == "get_admin_status":
@@ -68,8 +70,8 @@ def task(env, action, collection="None", platform="None", release="None", compon
     elif backend_action =="update":
         update = update_existing_doc(collection, platform, release, component, commands, links, dbaas)
         result.append(update)
-    elif backend_action =="reject":
-        update = reject(collection, platform, release, component, dbaas)
+    elif backend_action =="delete":
+        update = delete(collection, platform, release, component, dbaas)
         result.append(update)
     else:
         result.append("Action, platform and component combination is invalid or user does not have enough privileges to complete the task")
@@ -90,8 +92,7 @@ def get_admin_status(dbaas, user_name):
     get admin status for logged user using list of admin in MongoDB
     """
     user_admin_status = False
-    for doc in dbaas['admin_list'].find():
-        admin_names = doc["admin"]
+    admin_names = dbaas['admin_list'].find_one()["admin"]
     if user_name in admin_names:
         user_admin_status = True
 
@@ -101,18 +102,24 @@ def get_collection_list(admin_status, dbaas):
     """
     get collection list from MongoDB
     """
-    collection_list = []
-    if not admin_status:
-        for item in dbaas.collection_names():
-            if item != "admin_list" and item != "usage-event" and item != "iosxr" and "commander" not in item and "-draft" not in item:
-                collection_list.append(item.lower())
-    else:
-        for item in dbaas.collection_names():
-            if item != "admin_list" and item != "usage-event" and item != "iosxr" and "commander" not in item:
-                collection_list.append(item.lower())
+    restricted_item user = ["admin", "webexbot", "event", "commander"]
+    restricted_item_admin = ["admin", "webexbot", "draft", "event", "commander"]
 
-    collection_list.sort()
-    return collection_list
+    collection_list = []
+    result_list = []
+
+    for collection_name in dbaas.collection_names():
+        collection_list.append(collection_name.lower())
+
+    if not admin_status:
+        result_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_admin)]
+    else:
+        result_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_user)]
+
+    user_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_user)]
+
+    result_list.sort()
+    return result_list
 
 def get_platform_list(collection, dbaas):
     """
@@ -303,7 +310,7 @@ def update_existing_doc(collection, platform, release, component, commands, link
 
     return update_result
 
-def reject(collection, platform, release, component, dbaas):
+def delete(collection, platform, release, component, dbaas):
     """
     delete draft document from appropriate collection
     """
