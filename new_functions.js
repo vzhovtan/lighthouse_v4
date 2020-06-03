@@ -1,15 +1,19 @@
 $(document).ready(function(){
-  console.log("new function - version 10")
+  //for the debugging
+  $("#loading").hide()
+  //remove above line after deugging
+  console.log("new function - version Jun3")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
 
   $('#collections').on( 'click', 'li', function() {
+    clear_all()
     clear_and_hide_containers()
     $("#about").hide()
     $("#collections > li").removeClass("highlight")
     $(this).addClass("highlight")
-    let collection_name = $( this ).text().toLowerCase()
+    let collection_name = $(this).text().toLowerCase()
     if (collection_name.includes('draft')){
       $("#container_platform").addClass("container--draft")
       $("#container_release").addClass("container--draft")
@@ -26,14 +30,15 @@ $(document).ready(function(){
   })
 
   $('#platform').on( 'click', 'button', function() {
+    clear_all()
     $("#about").hide()
     $("#release").empty()
     $("#container_release").hide()
     $("#component").empty()
     $("#platform > button").removeClass("btn--highlight")
     $(this).addClass("btn btn--highlight")
-    let collection_name = $( this ).attr("id").toLowerCase()
-    let platform_name = $( this ).text().toLowerCase()
+    let collection_name = $(this).attr("id").toLowerCase()
+    let platform_name = $(this).text().toLowerCase()
     $("#container_component").show()
     if(platform_name.includes('create')){
       create_new_platform(collection_name)
@@ -43,13 +48,14 @@ $(document).ready(function(){
   })
 
   $('#component').on( 'click', 'button', function() {
+    clear_all()
     $("#about").hide()
     $("#release").empty()
     $("#component > button").removeClass("btn--highlight")
     $(this).addClass("btn btn--highlight")
-    let collection_name = $( this ).attr("id").toLowerCase().split("_")[0]
-    let platform_name = $( this ).attr("id").toLowerCase().split("_")[1]
-    let component_name = $( this ).text().toLowerCase()
+    let collection_name = $(this).attr("id").toLowerCase().split("_")[0]
+    let platform_name = $(this).attr("id").toLowerCase().split("_")[1]
+    let component_name = $(this).text().toLowerCase()
     $("#container_release").show()
     if(component_name.includes('create')){
       create_new_component(collection_name, platform_name)
@@ -62,99 +68,64 @@ $(document).ready(function(){
     clear_all()
     $("#release > button").removeClass("btn--highlight")
     $(this).addClass("btn btn--highlight")
-    let collection_name = $( this ).attr("id").toLowerCase().split("_")[0]
-    let platform_name = $( this ).attr("id").toLowerCase().split("_")[1]
-    let component_name = $( this ).attr("id").toLowerCase().split("_")[2]
-    let release_name = $( this ).text().toLowerCase()
+    let collection_name = $(this).attr("id").toLowerCase().split("_")[0]
+    let platform_name = $(this).attr("id").toLowerCase().split("_")[1]
+    let component_name = $(this).attr("id").toLowerCase().split("_")[2]
+    let release_name = $(this).text().toLowerCase()
     get_content(collection_name, platform_name, release_name, component_name)
   })
 
-  $( document ).ajaxStart(function() {
-    $("#loading").show()
-  })
+  $('#admin_button').on( 'click', 'button', function() {
+    $("#admin_button > button").removeClass("btn--highlight")
+    $(this).addClass("btn btn--highlight")
+    let collection_name = $(this).attr("id").toLowerCase().split("_")[0]
+    let platform_name = $(this).attr("id").toLowerCase().split("_")[1]
+    let component_name = $(this).attr("id").toLowerCase().split("_")[2]
+    let release_name = $(this).attr("id").toLowerCase().split("_")[3]
+    let action_name = $(this).text().toLowerCase()
+    if (action_name.includes('preview')){
+        get_preview(collection_name, platform_name, component_name,release_name)
+    } else if (action_name.includes('command diff')){
+        get_cmd_diff(collection_name, platform_name, component_name,release_name)
+    } else if (action_name.includes('link diff')){
+        get_link_diff(collection_name, platform_name, component_name,release_name)
+    } else if (action_name.includes('approve')){
+        let inputs = {}
+        let post_data = {name: task_name, input: inputs};
+        approve_doc(collection_name, platform_name, component_name,release_name, post_data)
+    } else if (action_name.includes('delete')){
+        let inputs = {}
+        let post_data = {name: task_name, input: inputs};
+        delete_doc(collection_name, platform_name, component_name,release_name, post_data)
+    } else if (action_name.includes('modify')){
+        let inputs = {}
+        let post_data = {name: task_name, input: inputs};
+        modify_doc(collection_name, platform_name, component_name,release_name, post_data)
+    } else if (action_name.includes('submit')){
+        let inputs = {}
+        let post_data = {name: task_name, input: inputs};
+        submit_changes(collection_name, platform_name, component_name,release_name, post_data)
+    } else if (action_name.includes('cancel')){
+        cancel_changes(collection_name, platform_name, component_name,release_name)
+    }
+  });
 
-  $( document ).ajaxStop(function() {
-    $("#loading").hide()
-  })
+  $('#reload').click(function() {
+    location.reload();
+  });
+
+  // $( document ).ajaxStart(function() {
+  //   $("#loading").show()
+  // })
+
+  // $( document ).ajaxStop(function() {
+  //   $("#loading").hide()
+  // })
 
 });
 
 let link = '/api/v2/jobs/lighthouse_v4_new_functions'
 let task_name = "lighthouse_v4_new_functions"
-let admin_buttons = ["Preview", "View command diff", "View link diff", "Approve document", "Delete document"]
-let user_buttons = ["Preview", "Modify", "Submit"]
-
-function create_new_platform(collection_name){
-  console.log("Create new platform function started" + collection_name)
-}
-
-function create_new_component(collection_name, platform_name) {
-  console.log("Create new component function started" + collection_name + platform_name)
-}
-
-function clear_and_hide_containers(){
-  $("#platform").empty()
-  $("#container_platform").hide()
-  $("#component").empty()
-  $("#container_component").hide()
-  $("#release").empty()
-  $("#container_release").hide()
-  $("#platform > div").removeClass("highlight")
-  $("#component > div").removeClass("highlight")
-  $("#release > div").removeClass("highlight")
-  $("#container_platform").removeClass()
-  $("#container_release").removeClass()
-  $("#container_component").removeClass()
-}
-
-function clear_and_hide_current_output(){
-  $("#current_output").empty()
-  $("#current_output_section").hide()
-}
-
-function clear_and_hide_command_section(){
-  $("#new_commands").empty()
-  $("#current_commands").empty()
-  $("#diff_commands").empty()
-  $("#command_section").hide()
-}
-
-function clear_and_hide_link_section(){
-  $("#new_links").empty()
-  $("#current_links").empty()
-  $("#diff_links").empty()
-  $("#link_section").hide()
-}
-
-function clear_and_hide_buttons(){
-  $("#admin_button").empty()
-  $("#button_section").hide()
-}
-
-function clear_all(){
-  clear_and_hide_current_output()
-  clear_and_hide_command_section()
-  clear_and_hide_link_section()
-  clear_and_hide_buttons()
-}
-
-function PaneOpen(html){
-  let user_view_modal = picoModal({
-      content: html,
-      overlayClose: true,
-      closeButton: true,
-      width: "90%",
-  })
-  return user_view_modal
-}
-
-function openModal(text){
-    document.getElementById("modal-small").style.visibility = "visible"
-    document.getElementById("subtitle").innerHTML = text
-}
-
-function closeModal(){
-    document.getElementById("subtitle").innerHTML = ""
-    document.getElementById("modal-small").style.visibility = "hidden"
-
-}
+let admin_buttons = ["Preview", "View command diff", "View link diff", "Modify", "Approve document", "Delete document"]
+let user_buttons = ["Preview", "Modify"]
+let submit_buttons = ["Submit", "Cancel"]

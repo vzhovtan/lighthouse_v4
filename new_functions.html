@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/picomodal/3.0.0/picoModal.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
     <script type="text/javascript" src="new_functions_getters.js"></script>
+    <script type="text/javascript" src="new_functions_other.js"></script>
     <script type="text/javascript" src="new_functions.js"></script>
 </head>
 
@@ -39,15 +40,16 @@
       </div>
     </div>
     <div class="header-toolbar">
-      <a class="btn btn--icon btn--large btn--primary" id="1" title="1">
+      <a class="btn btn--icon btn--large btn--primary" id="reload" title="Reload">
         <span class="icon-refresh"></span>
       </a>
-      <a class="btn btn--icon btn--large btn--primary" id="2" title="2">
+      <a class="btn btn--icon btn--large btn--primary" href="mailto:lighthouse-csone@cisco.com?Subject=Lighthouse v4.0 Feedback" title="Submit Feedback">
         <span class="icon-email"></span>
       </a>
     </div>
   </div>
 </header>
+
 
 <!-- Main container start -->
 <div class="loading" id="loading"></div>
@@ -157,7 +159,6 @@
   </div>
 </div>
 
-
 <!-- Main container end-->
 
 <!-- Footer start-->
@@ -174,6 +175,20 @@
     </ul>
   </div>
 </footer>
+
+<!-- Modal element -->
+<div class="modal modal--small" id="modal-small" style="visibility:hidden">
+  <div class="modal__dialog">
+    <div class="modal__content">
+      <div class="modal__body">
+        <p class="subtitle" id="subtitle"></p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn" onclick="closeModal('modal-small')">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </main>
 </body>
