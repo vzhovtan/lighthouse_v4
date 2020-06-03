@@ -3,7 +3,7 @@ console.log("new function getters - version Jun3")
 function get_collection_list(){
   //for the debugging, applying the static list of collection to save time yet
   console.log("static list is being used for collection list")
-  let static_list = ["ios-xr", "ios-xr-draft", "nexus"]
+  let static_list = ["ios-xr", "ios-xr-draft", "nexus", "nexus-draft"]
   static_list.forEach(function(item){
     $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
   })
@@ -38,13 +38,13 @@ function get_platform_list(collection_name, post_data){
             platform_list.push(item.platform)
         }
       })
-      console.log(platform_list)
+      console.log(platform_list) 
       if (!collection_name.includes('draft')){
         $("#platform").append("<button class='btn btn--new' id='" + collection_name + "'>" + "Create new platform" + "</button>")
       }
       platform_list.forEach(function(item){
         $("#platform").append("<button class='btn btn--platform' id='" + collection_name + "'>" + item + "</button>")
-      })
+      }) 
     }
   });
 }
@@ -101,15 +101,15 @@ function get_content(collection_name, platform_name, release_name, component_nam
   console.log(link_list)
   $("#current_output").empty()
   $("#current_output_section").show()
-  let output= "<br><h3>" + collection_name.toUpperCase() + " - " + platform_name.toUpperCase() + " - " + component_name.toUpperCase() + " - " + release_name.toUpperCase() + "</h3><br>"
+  let output= "<br><h6>" + platform_name + " - " + component_name + " - " + release_name + "</h6><br>"
   if (command_list[0]){
-    output += "<br><h4>Command list</h4><br>"
+    output += "<br><h6>Command list</h6><br>"
     command_list[0].forEach(function(item){    
       output += item + "<br>"
     })
   }
   if (link_list[0]){
-    output += "<br><h4>Link list</h4><br>"
+    output += "<br><h6>Link list</h6><br>"
     link_list[0].forEach(function(item){    
       output += item + "<br>"
     })
@@ -135,9 +135,9 @@ function get_preview(collection_name, platform_name, component_name,release_name
   let content = ""
   let header = "</div><br></div><div align='left'><img src='https://i.imgur.com/f0vBigO.jpg' alt=''></div>"
   let footer = "</div><br></div><div align='left'><a href='mailto:lighthouse-csone@cisco.com?Subject=Lighthouse%20Feedback' target='_top'>comments/questions/feedbacks</a></div><br>"
-  let cmd_header = "<div><br><h6>Useful Commands For Troubleshooting: (some commands syntax could vary according to platform or version)</h6><br><br><div style='width:98%'"
-  let link_header = "<br><h6>Support Links: (links can become obsolete at any time, send feedback to help maintain accuracy)</h6><br><br>"
-  content += header + "<div style='text-align:center'><h6>" + platform_name + " - " + component_name + " - " + release_name + "</h6></div>"
+  let cmd_header = "<div><br><h6>Useful commands for troubleshooting: (some commands syntax could vary according to platform or version)</h6><br><br><div style='width:98%'"
+  let link_header = "<br><h6>Support links: (links can become obsolete at any time, send feedback to help maintain accuracy)</h6><br><br>"
+  content += header + "<h6 style='text-align:center'>" + platform_name + " - " + component_name + " - " + release_name + "</h6>"
 
   let command_list = []
   let link_list = []
