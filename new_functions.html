@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html class="cui">
+<head lang="en">
+    <meta charset="utf-8">
+    <title>Lighthouse Admin Test Portal</title>
+    <link rel="shortcut icon" type="image/x-icon" href="https://scripts.cisco.com/app/cisco_ui_kit_1_2_2/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="https://scripts.cisco.com/app/cisco_ui_kit_1_2_2/css/cui-standard.min.css?v=1.00"/>
+    <link rel="stylesheet" href="new_functions.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/picomodal/3.0.0/picoModal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
+    <script type="text/javascript" src="new_functions_getters.js"></script>
+    <script type="text/javascript" src="new_functions.js"></script>
+</head>
+
+<body class="cui">
+
+<div class="content-fluid">
+<!-- Sidebar start -->
+  <div class="sidebar">
+    <div class="sidebar__header">
+      <div class="sidebar__header-title">Collections</div>
+    </div>
+    <div>
+    <ul id="collections"></ul>
+    </div>
+  </div>
+
+<main>
+<!-- Header start -->
+<header class="header">
+  <div class="header-bar container">
+    <a class="header-bar__logo">
+      <span class="icon-cisco"></span>
+    </a>
+    <div class="header-bar__main">
+      <div class="header-heading">
+        <h1 class="page-title">Lighthouse Admin Test Portal</h1>
+      </div>
+    </div>
+    <div class="header-toolbar">
+      <a class="btn btn--icon btn--large btn--primary" id="1" title="1">
+        <span class="icon-refresh"></span>
+      </a>
+      <a class="btn btn--icon btn--large btn--primary" id="2" title="2">
+        <span class="icon-email"></span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- Main container start -->
+<div class="loading" id="loading"></div>
+<div class="content" style="height:100%">
+  <!-- Section "about"-->
+  <div class="container">
+    <div class="section" id="about">
+      <div class="text-center">
+        <h2>What is Lighthouse</h2>
+      </div><br>
+      <div class="text-left">
+        <p>Lighthouse is developed by engineers for engineers providing common resource of useful commands and support links to help in troubleshooting.</p>
+        <p>This portal is developed for engineers to edit, add and delete resources. Once submitted, the new content will be reviewed by admins to validate and
+        check accuracy before it becomes available to all users.</p>
+        <p>The resources (commands and links) are grouped by Platform/Technology.</p>
+        <p>Commands section is intended to provide helpful commands or tools for troubleshooting.</p>
+        <p>Links section is intended to provide helpful links or BU alias for further investigation. Helpful resources troubleshooting could be tech-zone,
+        Cisco Wikis, webex recording, topic or any Cisco documents.</p>
+        <p>Please check the "Guidlines" section below to see how the new content should be formatted</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section containers -->
+  <!-- Section "platform list" -->
+  <div id="container_platform">
+    <div class="section">
+      <div class="text-center" id="platform"></div>
+    </div>
+  </div>
+
+  <!-- Section "component list" -->
+  <div id="container_component">
+    <div class="section">
+      <div class="text-center" id="component"></div>
+    </div>
+  </div>
+
+  <!-- Section "release list" -->
+  <div id="container_release">
+    <div class="section">
+      <div class="text-center" id="release"></div>
+    </div>
+  </div>
+
+<!-- Section "current content" -->
+<div class="container" id="current_output_section">
+  <div class="section" id="current_output"></div>
+</div>
+
+<!-- Section "content for review and editing" -->
+<!-- Command section -->
+<div class="container" id="command_section">
+  <div class="col-md-12 base-margin-top">
+    <form>
+      <label for="new_commands" id="label_new_commands"><b>New commands</b></label>
+      <textarea class="textarea" id="new_commands" rows="15" placeholder=""></textarea>
+    </form>
+  </div>
+
+  <div class="col-md-12 base-margin-top">
+    <form>
+      <label for="original_commands" id="label_current_commands"><b>Current commands</b></label>
+      <textarea class="textarea" id="current_commands" rows="15" placeholder=""></textarea>
+    </form>
+  </div>
+
+  <div class="col-md-12 base-margin-top">
+    <form>
+      <label for="new_commands" id="label_diff_commands"><b>Diff commands</b></label>
+      <textarea class="textarea" id="diff_commands" rows="15" placeholder=""></textarea>
+    </form>
+  </div>
+</div>
+
+<!-- Link section -->
+<div class="container" id="link_section">
+  <div class="col-md-12 base-margin-top">
+    <form>
+      <label for="new_commands" id="label_new_links"><b>New links</b></label>
+      <textarea class="textarea" id="new_links" rows="15" placeholder=""></textarea>
+    </form>
+  </div>
+
+  <div class="col-md-12 base-margin-top">
+    <form>
+      <label for="original_links" id="label_current_links"><b>Current links</b></label>
+      <textarea class="textarea" id="current_links" rows="15" placeholder=""></textarea>
+    </form>
+  </div>
+
+  <div class="col-md-12 base-margin-top">
+    <form>
+      <label for="new_commands" id="label_diff_links"><b>Diff links</b></label>
+      <textarea class="textarea" id="diff_links" rows="15" placeholder=""></textarea>
+    </form>
+  </div>
+</div>
+
+<!-- Button section -->
+
+<div class="row" id="button_section">
+  <div class="container">
+      <div class="section">
+        <div class="text-center" id="admin_button"></div>
+      </div>
+  </div>
+</div>
+
+
+<!-- Main container end-->
+
+<!-- Footer start-->
+<footer class="footer footer--new footer--basic" id="footer">
+  <div class="footer__links">
+    <ul class="list">
+      <li><a href="http://www.cisco.com/cisco/web/siteassets/contacts/index.html" target="_blank">Contacts</a></li>
+      <li><a href="https://secure.opinionlab.com/ccc01/o.asp?id=jBjOhqOJ" target="_blank">Feedback</a></li>
+      <li><a href="http://www.cisco.com/c/en/us/about/sitemap.html" target="_blank">Site Map</a></li>
+      <li><a href="http://www.cisco.com/web/siteassets/legal/terms_condition.html" target="_blank">Terms & Conditions</a></li>
+      <li><a href="http://www.cisco.com/web/siteassets/legal/privacy_full.html" target="_blank">Privacy Statement</a></li>
+      <li><a href="http://www.cisco.com/web/siteassets/legal/privacy_full.html#cookies" target="_blank">Cookie Policy</a></li>
+      <li><a href="http://www.cisco.com/web/siteassets/legal/trademark.html" target="_blank">Trademarks</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+</body>
+</html>

@@ -116,7 +116,7 @@ def get_collection_list(admin_status, dbaas):
     else:
         result_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_user)]
 
-    user_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_user)]
+    #user_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_user)]
 
     result_list.sort()
     return result_list
