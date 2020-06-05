@@ -2,7 +2,7 @@ $(document).ready(function(){
   //for the debugging
   $("#loading").hide()
   //remove above line after deugging
-  console.log("new function - version Jun3")
+  console.log("new function - version Jun5")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
@@ -129,3 +129,4 @@ let task_name = "lighthouse_v4_new_functions"
 let admin_buttons = ["Preview", "View command diff", "View link diff", "Modify", "Approve document", "Delete document"]
 let user_buttons = ["Preview", "Modify"]
 let submit_buttons = ["Submit", "Cancel"]
+let static_list = ["ios-xr", "ios-xr-draft", "nexus", "nexus-draft"]

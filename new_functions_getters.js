@@ -1,9 +1,8 @@
-console.log("new function getters - version Jun3")
+console.log("new function getters - version Jun5")
 
 function get_collection_list(){
   //for the debugging, applying the static list of collection to save time yet
   console.log("static list is being used for collection list")
-  let static_list = ["ios-xr", "ios-xr-draft", "nexus", "nexus-draft"]
   static_list.forEach(function(item){
     $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
   })
@@ -38,6 +37,7 @@ function get_platform_list(collection_name, post_data){
             platform_list.push(item.platform)
         }
       })
+      platform_list.sort()
       console.log(platform_list) 
       if (!collection_name.includes('draft')){
         $("#platform").append("<button class='btn btn--new' id='" + collection_name + "'>" + "Create new platform" + "</button>")
@@ -59,6 +59,7 @@ function get_component_list(collection_name, platform_name){
       }
     }  
   })
+  component_list.sort()
   console.log(component_list)
   if (!collection_name.includes('draft')){
     $("#component").append("<button class='btn btn--new' id='" + collection_name + "_" + platform_name + "'>" + "Create new platform" + "</button>")
@@ -80,9 +81,13 @@ function get_release_list(collection_name, platform_name, component_name){
       }
     }  
   })
+  release_list.sort()
   console.log(release_list)
+  $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + "Release Independent" + "</button>")
   release_list.forEach(function(item){
-    $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + item + "</button>")
+    if (!item.includes("independent")){
+      $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + item + "</button>")
+    }
   })
 }
 

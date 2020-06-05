@@ -3,13 +3,10 @@ $(document).ready(function(){
 
   $('#1').click(function() {
       $('#about').hide();
-      $("#container_platform").addClass("container--platform_test")
+      $("#container_platform").addClass("container--platform_release")
       $("#container_platform").show();
-      $("#container_platform").append('<div class="text-center"><h5>Select platform or create new one</h5></div>')
       $("#container_component").show();
-      $("#container_component").append('<div class="text-center"><h5>Select component or create new one</h5></div>')
       $("#container_release").show();
-      $("#container_release").append('<div class="text-center"><h5>Select release to view or modify the document</h5></div>')
       adm_btns.forEach(function(item){
          $("#container_platform").append("<button class='btn btn--platform'>" + item + "</button>");
       });

@@ -4,8 +4,8 @@
   padding-left: 10px;
   margin-right: auto;
   margin-left: auto;
-  overflow: auto;
-  height:15%
+  min-height: 100px;
+  overflow: hidden;
  }
 
 .container--component_prod {
@@ -24,8 +24,8 @@
   padding-left: 10px;
   margin-right: auto;
   margin-left: auto;
-  overflow: auto;
-  height:10%
+  min-height: 100px;
+  overflow: hidden;
  }
 .cui .btn.btn--platform {
   border: 1px solid transparent;
