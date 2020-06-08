@@ -79,7 +79,7 @@
     </div>
 
     <!-- Section "platform list" -->
-    <div id="container_platform">
+    <div class="container--component" id="container_platform">
         <div class="section">
             <div class="text-center" id="platform"></div>
         </div>
@@ -88,12 +88,29 @@
     <!-- Section "component list" -->
     <div class="container--component" id="container_component">
         <div class="section">
-            <div class="text-center" id="release"></div>
+          <div class="col-md-3">
+            <div class="form-group dropdown">
+                <div class="form-group__text select">
+                    <input id="select-size-default" value="Select an Option">
+                    <label for="select-size-default">Default</label>
+                </div>
+                <div class="dropdown__menu">
+                    <a>Option 1</a>
+                    <a>Option 2</a>
+                    <a>Option 3</a>
+                </div>
+            </div>
+        </div>
+          <div align='center'>
+          <br><select id=select1 style='width:75%;'><option value=0 >-- select a component --</option><option value=0>7600</option><option value=1>asr9k</option><option value=2>cbr-8</option><option value=3>crs</option><option value=4>gsr12k</option><option value=5>ios-xr-pi</option><option value=6>ncs5500</option><option value=7>ubr10k-cmts</option></select></br>
+          </div>
+        </div>
+          <div class="text-center" id="release"></div>
         </div>
     </div>
 
     <!-- Section "release list" -->
-    <div class="container--platf_release" id="container_release">
+    <div class="container--component" id="container_release">
         <div class="section">
             <div class="text-center" id="component"></div>
         </div>
@@ -183,35 +200,4 @@
 
 </main>
 </body>
-
-<!--
-current output section opened by hiding release container
-Buttons in current output are:
-
-"preview" which brings modal.
-
-"modify" which hide release container AND open current command and current link_section
-
-"submit" which hide "modify" button AND after pressing empty current command and current link_section
-AND hide current command and current link_section AND show "modify" button AND refresh + show release container
-
-=====
-
-Draft collection doesn't have container_release and use "release independent"  for all component only
-Click on component button show new commands and new links with content only
-
-Buttons in draft section are:
-
-"preview" which brings modal.
-
-"view command diff" brings command secion only
-
-"view link diff" brings link secion only
-
-"approve document" takes data from new command + new link and save it in production collections
-AND then removes document from draft collection AND empty and hide new command + new link + refresh component container
-
-"delete document" button remove the document from draft collection AND empty and hide
-new command + new link + refresh component container
--->
 </html>

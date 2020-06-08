@@ -23,8 +23,8 @@
   padding-left: 10px;
   margin-right: auto;
   margin-left: auto;
-  overflow: auto;
-  height:20%
+  min-height: 100px;
+  overflow: hidden;
  }
 
 .cui .btn.btn--platform {

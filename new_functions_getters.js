@@ -83,7 +83,11 @@ function get_release_list(collection_name, platform_name, component_name){
   })
   release_list.sort()
   console.log(release_list)
-  $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + "Release Independent" + "</button>")
+  release_list.forEach(function(item){
+    if (item.includes("independent")){
+      $("#release").append("<button class='btn btn--independent' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + "Release Independent" + "</button>")
+    }
+  })
   release_list.forEach(function(item){
     if (!item.includes("independent")){
       $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + item + "</button>")

@@ -107,6 +107,22 @@
   cursor: pointer;
 }
 
+.cui .btn.btn--independent {
+  border: 1px solid transparent;
+  background:#B5337B ;
+  color: #fff;
+  margin: 10px;
+  text-decoration: none;
+}
+
+.cui .btn.btn--independent:hover{
+  background: #5D1A3E;
+  -webkit-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
 .cui .btn.btn--highlight {
   border: 1px solid transparent;
   background: #cad5f7 ;
