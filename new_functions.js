@@ -2,7 +2,7 @@ $(document).ready(function(){
   //for the debugging
   $("#loading").hide()
   //remove above line after deugging
-  console.log("new function - version Jun5")
+  console.log("new function  - - rel June 9")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
@@ -25,7 +25,6 @@ $(document).ready(function(){
     }
     let inputs = {"action":"get_collection_data", "collection":collection_name}
     let post_data = {name: task_name, input: inputs}
-    $("#container_platform").show()
     get_platform_list(collection_name, post_data)
   })
 
@@ -100,7 +99,7 @@ $(document).ready(function(){
     } else if (action_name.includes('modify')){
         let inputs = {}
         let post_data = {name: task_name, input: inputs};
-        modify_doc(collection_name, platform_name, component_name,release_name, post_data)
+        modify_doc(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('submit')){
         let inputs = {}
         let post_data = {name: task_name, input: inputs};
@@ -113,14 +112,6 @@ $(document).ready(function(){
   $('#reload').click(function() {
     location.reload();
   });
-
-  // $( document ).ajaxStart(function() {
-  //   $("#loading").show()
-  // })
-
-  // $( document ).ajaxStop(function() {
-  //   $("#loading").hide()
-  // })
 
 });
 

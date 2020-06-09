@@ -30,11 +30,17 @@ def task(env, action, collection="None", platform="None", release="None", compon
         release_list = get_release_list(collection, platform, component, mydb4)
         result.append(release_list)    
     elif backend_action == "get_content_raw":
-        content_data = get_content_raw (collection, platform, release, component, mydb4)
+        content_data = get_content_raw (collection, platform, component, release, mydb4)
         result.append(content_data)
     elif backend_action == "get_content_final":
-        content_data = get_content_final (collection, platform, release, component, mydb4)
-        result.append(content_data)        
+        content_data = get_content_final (collection, platform, component, release, mydb4)
+        result.append(content_data)
+    elif backend_action == "get_command_diff":
+        content_data = get_command_diff (collection, platform, component, release, mydb4)
+        result.append(content_data)
+    elif backend_action == "get_link_diff":
+        content_data = get_link_diff (collection, platform, component, release, mydb4)
+        result.append(content_data)                
     else:
         result.append("Action is invalid")
 
@@ -86,21 +92,51 @@ def get_release_list(collection, platform, component, mydb4):
     release_list.sort()
     return release_list
 
-def get_content_raw (collection, platform, release, component, mydb4):
+def get_content_raw (collection, platform, component, release, mydb4):
     """
     get commands and links from MongoDB for specific collection/platform/release/component
-    without formatting
-    can be used for specific request only
+    without formatting, can be used for specific request only
     """
     content_db = []
     db_dict = {"platform": platform, "release": release, "component": component}
     doc = mydb4[collection].find_one(db_dict)
-    content_db.append(doc.get("commands"))
-    content_db.append(doc.get("links"))
+    if doc:
+        content_db.append(doc.get("commands", ""))
+        content_db.append(doc.get("links", ""))
 
     return content_db
 
-def get_content_final (collection, platform, release, component, mydb4):
+def get_command_diff (collection, platform, component, release, mydb4):
+    """
+    get commands from MongoDB for specific collection/platform/release/component
+    without formatting, can be used for diff request
+    """
+    command_db = []
+    db_dict = {"platform": platform, "release": release, "component": component}
+    doc = mydb4[collection].find_one(db_dict)
+    if doc:
+        command_db = doc.get("commands", "")
+    else:
+        command_db = ["no current data"]
+
+    return command_db
+
+def get_link_diff (collection, platform, component, release, mydb4):
+    """
+    get links from MongoDB for specific collection/platform/release/component
+    without formatting, can be used for diff request
+    """
+    link_db = []
+    db_dict = {"platform": platform, "release": release, "component": component}
+    doc = mydb4[collection].find_one(db_dict)
+    if doc:
+        link_db = doc.get("links", "")
+    else:
+        link_db = ["no current data"]
+
+    return link_db
+
+def get_content_final (collection, platform, component, release, mydb4):
     """
     1 - get commands and links from MongoDB for specific collection/platform/release/component
     2 - format the output as html for CSOne/Lightning front-end
