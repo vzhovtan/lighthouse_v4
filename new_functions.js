@@ -2,7 +2,7 @@ $(document).ready(function(){
   //for the debugging
   $("#loading").hide()
   //remove above line after deugging
-  console.log("new function  - - rel June 9")
+  console.log("new function  - - rel June 10.4")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
@@ -81,9 +81,14 @@ $(document).ready(function(){
     let platform_name = $(this).attr("id").toLowerCase().split("_")[1]
     let component_name = $(this).attr("id").toLowerCase().split("_")[2]
     let release_name = $(this).attr("id").toLowerCase().split("_")[3]
+    let context = $(this).attr("id").toLowerCase().split("_")[4]
     let action_name = $(this).text().toLowerCase()
-    if (action_name.includes('preview')){
-        get_preview(collection_name, platform_name, component_name,release_name)
+    if (action_name.includes('final')){
+        //data taken from collection in DB
+        get_final_view(collection_name, platform_name, component_name,release_name)
+    } else if (action_name.includes('preview')){
+        //data taken from text form
+        preview (collection_name, platform_name, component_name, release_name, context)
     } else if (action_name.includes('command diff')){
         get_cmd_diff(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('link diff')){
@@ -97,13 +102,10 @@ $(document).ready(function(){
         let post_data = {name: task_name, input: inputs};
         delete_doc(collection_name, platform_name, component_name,release_name, post_data)
     } else if (action_name.includes('modify')){
-        let inputs = {}
-        let post_data = {name: task_name, input: inputs};
         modify_doc(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('submit')){
-        let inputs = {}
-        let post_data = {name: task_name, input: inputs};
-        submit_changes(collection_name, platform_name, component_name,release_name, post_data)
+        //data taken from text form
+        submit_changes(collection_name, platform_name, component_name, release_name, context)
     } else if (action_name.includes('cancel')){
         cancel_changes(collection_name, platform_name, component_name,release_name)
     }
@@ -114,10 +116,3 @@ $(document).ready(function(){
   });
 
 });
-
-let link = '/api/v2/jobs/lighthouse_v4_new_functions'
-let task_name = "lighthouse_v4_new_functions"
-let admin_buttons = ["Preview", "View command diff", "View link diff", "Modify", "Approve document", "Delete document"]
-let user_buttons = ["Preview", "Modify"]
-let submit_buttons = ["Submit", "Cancel"]
-let static_list = ["ios-xr", "ios-xr-draft", "nexus", "nexus-draft"]

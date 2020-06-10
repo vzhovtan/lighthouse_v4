@@ -1,9 +1,9 @@
-console.log("new function getters - rel June 9")
+console.log("new function getters - rel June 10.5")
 
 function get_collection_list(){
-  //fusing static list of collection
+  //using static list of collection
   console.log("static list is being used for collection list")
-  static_list.forEach(function(item){
+  admin_collection_list.forEach(function(item){
     $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
   })
   //BDB call to get collection list
@@ -60,7 +60,7 @@ function get_component_list(collection_name, platform_name){
   component_list.sort()
   console.log("Component list", component_list)
   if (!collection_name.includes('draft')){
-    $("#component").append("<button class='btn btn--new' id='" + collection_name + "_" + platform_name + "'>" + "Create new platform" + "</button>")
+    $("#component").append("<button class='btn btn--new' id='" + collection_name + "_" + platform_name + "'>" + "Create new component" + "</button>")
   }
   component_list.forEach(function(item){
     $("#component").append("<button class='btn btn--component' id='" + collection_name + "_" + platform_name + "'>" + item + "</button>")
@@ -125,24 +125,31 @@ function get_content(collection_name, platform_name, release_name, component_nam
   if (collection_name.toLowerCase().includes('draft')){
     $("#button_section").show()
     admin_buttons.forEach(function(item){
-      $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "'>" + item + "</button>")
+      $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "draftcollection" + "'>" + item + "</button>")
     })
   } else {
-    $("#button_section").show()
-    user_buttons.forEach(function(item){
-      $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "'>" + item + "</button>")
-    })
+    if (release_name.toLowerCase().includes('independent')){
+      $("#button_section").show()
+      user_buttons_rel_independent.forEach(function(item){
+        $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "independentrelease" + "'>" + item + "</button>")
+      })
+    } else {
+      $("#button_section").show()
+      user_buttons_all_releases.forEach(function(item){
+        $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "regularrelease" + "'>" + item + "</button>")
+      })
+    }
   }
 }
 
-function get_preview(collection_name, platform_name, component_name,release_name){
-  console.log("get_preview called --> using collection_data")
+function get_final_view(collection_name, platform_name, component_name,release_name){
+  console.log("get_final_view called --> using collection_data")
   let content = ""
   let header = "</div><br></div><div align='left'><img src='https://i.imgur.com/f0vBigO.jpg' alt=''></div>"
   let footer = "</div><br></div><div align='left'><a href='mailto:lighthouse-csone@cisco.com?Subject=Lighthouse%20Feedback' target='_top'>comments/questions/feedbacks</a></div><br>"
   let cmd_header = "<div><br><h6>Useful commands for troubleshooting: (some commands syntax could vary according to platform or version)</h6><br><br><div style='width:98%'"
   let link_header = "<br><h6>Support links: (links can become obsolete at any time, send feedback to help maintain accuracy)</h6><br><br>"
-  content += header + "<h6 style='text-align:center'>" + platform_name + " - " + component_name + " - " + release_name + "</h6>"
+  content += header + "<h6 style='text-align:center'>" + platform_name + " --- " + component_name + " --- " + release_name + " --- " + collection_name  + "</h6>"
 
   let command_list = []
   let link_list = []
@@ -254,6 +261,11 @@ function get_cmd_diff(collection_name, platform_name, component_name,release_nam
 
         $("#loading").hide()
         $("#command_section").show()
+        clear_and_hide_buttons()
+        $("#button_section").show()
+        submit_buttons.forEach(function(item){
+          $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdiffcmd" + "'>" + item + "</button>")
+        })
       }
   });
 }
@@ -318,6 +330,11 @@ function get_link_diff(collection_name, platform_name, component_name,release_na
 
         $("#loading").hide()
         $("#link_section").show()
+        clear_and_hide_buttons()
+        $("#button_section").show()
+        submit_buttons.forEach(function(item){
+          $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdifflink" + "'>" + item + "</button>")
+        })
       }
   });
 }
