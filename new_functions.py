@@ -25,22 +25,22 @@ def task(env, action, collection="None", platform="None", release="None", compon
         result.append(collection_list)
     elif backend_action == "get_collection_data":
         collection_data = get_collection_data(collection, mydb4)
-        result.append(collection_data)
-    elif backend_action == "get_release_list":
-        release_list = get_release_list(collection, platform, component, mydb4)
-        result.append(release_list)    
+        result.append(collection_data) 
     elif backend_action == "get_content_raw":
         content_data = get_content_raw (collection, platform, component, release, mydb4)
         result.append(content_data)
     elif backend_action == "get_content_final":
         content_data = get_content_final (collection, platform, component, release, mydb4)
         result.append(content_data)
-    elif backend_action == "get_command_diff":
-        content_data = get_command_diff (collection, platform, component, release, mydb4)
-        result.append(content_data)
-    elif backend_action == "get_link_diff":
-        content_data = get_link_diff (collection, platform, component, release, mydb4)
-        result.append(content_data)                
+    elif backend_action == "submit_changes":
+        change_result = submit_changes (collection, platform, component, release, commands, links, userid, mydb4)
+        result.append(change_result)
+    elif backend_action == "delete_document":
+        del_result = delete_doc (collection, platform, component, release, userid, mydb4)
+        result.append(del_result) 
+    elif backend_action == "approve_document":
+        aprv_result = approve_doc (collection, platform, component, release, userid, mydb4)
+        result.append(aprv_result)                               
     else:
         result.append("Action is invalid")
 
@@ -78,20 +78,6 @@ def get_collection_data(collection, mydb4):
 
     return collection_data
 
-def get_release_list(collection, platform, component, mydb4):
-    """
-    get release list from MongoDB for specific collection/platform/component
-    can be used for specific request only, such as reload the collection list after update
-    """
-    release_list = []
-    db_dict = {"platform": platform, "component": component}
-    for item in mydb4[collection].find(db_dict):
-        if item["release"].lower() not in release_list:
-            release_list.append(item["release"].lower())
-
-    release_list.sort()
-    return release_list
-
 def get_content_raw (collection, platform, component, release, mydb4):
     """
     get commands and links from MongoDB for specific collection/platform/release/component
@@ -105,36 +91,6 @@ def get_content_raw (collection, platform, component, release, mydb4):
         content_db.append(doc.get("links", ""))
 
     return content_db
-
-def get_command_diff (collection, platform, component, release, mydb4):
-    """
-    get commands from MongoDB for specific collection/platform/release/component
-    without formatting, can be used for diff request
-    """
-    command_db = []
-    db_dict = {"platform": platform, "release": release, "component": component}
-    doc = mydb4[collection].find_one(db_dict)
-    if doc:
-        command_db = doc.get("commands", "")
-    else:
-        command_db = ["no current data"]
-
-    return command_db
-
-def get_link_diff (collection, platform, component, release, mydb4):
-    """
-    get links from MongoDB for specific collection/platform/release/component
-    without formatting, can be used for diff request
-    """
-    link_db = []
-    db_dict = {"platform": platform, "release": release, "component": component}
-    doc = mydb4[collection].find_one(db_dict)
-    if doc:
-        link_db = doc.get("links", "")
-    else:
-        link_db = ["no current data"]
-
-    return link_db
 
 def get_content_final (collection, platform, component, release, mydb4):
     """
@@ -185,3 +141,82 @@ def get_content_final (collection, platform, component, release, mydb4):
     content_final += "</div><br></div><div align='left'><a href='mailto:lighthouse-csone@cisco.com?Subject=Lighthouse%20Feedback' target='_top'>comments/questions/feedbacks</a></div><br>"
 
     return content_final
+
+def submit_changes (collection, platform, component, release, commands, links, userid, mydb4):
+    """
+    Update MongoDB with command and list for specific collection/platform/release/component
+    """
+    content = ""
+    submitted_doc = {}
+    db_dict = {"platform": platform, "component": component, "release": release}
+    submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
+    platform, component, release, commands.split("\n"), links.split("\n"), userid
+
+    if "draft" in collection:
+        collection_to_update = collection.replace("-draft", "")
+        replace = mydb4[collection_to_update].replace_one(db_dict, submitted_doc, True)
+        replace_result = replace.modified_count
+        remove = mydb4[collection].delete_one(db_dict)
+        remove_result = remove.deleted_count
+        if replace_result >= 0 and remove_result == 1:
+            content = "Document update was successful" + userid            
+        else:
+            content = "There was an error with update"           
+    else:
+        collection_to_update = collection + "-draft"
+        doc_draft = mydb4[collection_to_update].find_one(db_dict)
+        if not doc_draft:
+            new_doc = mydb4[collection_to_update].insert_one(submitted_doc)
+            content = "New document id in DB " + new_doc.inserted_id + " submitted by " + useriid
+        else:
+            content = "Similar document for the same platform/component/release is under review already"
+
+    return content
+
+def delete_doc (collection, platform, component, release, userid, mydb4):
+    """
+    Delete MongoDB document for specific collection/platform/release/component
+    """
+    content = ""
+    db_dict = {"platform": platform, "component": component, "release": release}
+    remove = mydb4[collection].delete_one(db_dict)
+    remove_result = remove.deleted_count
+    if remove_result == 1:
+        content = "Document removed by " + userid
+    else:
+        content = "There was an error with update"
+
+    return content
+
+def approve_doc (collection, platform, component, release, userid, mydb4):
+    """
+    Approve document from JS protal and submit it in MongoDB for specific collection/platform/release/component
+    This one is different from submit function which takes the data from JS form and this one takes data from already 
+    submmited documents in '-draft' collection and just put them into 'production' collection
+    """
+    content = ""
+    submitted_doc = {}
+    db_dict = {"platform": platform, "component": component, "release": release}
+    collection_to_update = collection.replace("-draft", "")
+    draft_doc = mydb4[collection].find_one(db_dict)
+    if draft_doc:
+        submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
+            draft_doc.get("platform", ""), draft_doc.get("component", ""), draft_doc.get("release", ""), draft_doc.get("commands", ""), draft_doc.get("links", ""), userid
+
+    print("draft document " + draft_doc)
+    print("submitted document " + submitted_doc)
+
+    replace = mydb4[collection_to_update].replace_one(db_dict, submitted_doc, True)
+    replace_result = replace.modified_count
+    remove = mydb4[collection].delete_one(db_dict)
+    remove_result = remove.deleted_count
+    if replace_result >= 0 and remove_result == 1:
+        content = "Document approval was successful" + userid            
+    else:
+        content = "There was an error with approval"
+
+    print("replace count " + replace_result)
+    print("removed delted count " + remove_result)
+    return content
+
+

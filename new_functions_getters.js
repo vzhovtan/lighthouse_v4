@@ -1,4 +1,4 @@
-console.log("new function getters - rel June 10.5")
+console.log("new function getters - rel June11")
 
 function get_collection_list(){
   //using static list of collection
@@ -6,19 +6,7 @@ function get_collection_list(){
   admin_collection_list.forEach(function(item){
     $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
   })
-  //BDB call to get collection list
-  // console.log("get_collection_list started")
-  // let inputs = {"action":"get_collection_list"}
-  // let post_data = {name: task_name, input: inputs}
-  // $.post({url: link, dataType: "json", data: post_data})
-  // .done(function(result){
-  //   if(result.data.variables._0){
-  //     result.data.variables._0.forEach(function(item){
-  //       $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
-  //     })
-  //   }
-  // });
-  }
+}
    
 function get_platform_list(collection_name, post_data){
   $("#loading").show()
@@ -46,7 +34,9 @@ function get_platform_list(collection_name, post_data){
     $("#container_platform").show()
   });
 }
-  
+
+
+
 function get_component_list(collection_name, platform_name){
   console.log("get_component_list called --> using collection_data")
   let component_list = []
@@ -201,140 +191,115 @@ function get_final_view(collection_name, platform_name, component_name,release_n
   user_view_modal.show();
 }  
 
-function get_cmd_diff(collection_name, platform_name, component_name,release_name){
-  console.log("get_cmd_diff started - calling BDB")
+
+function get_diff(collection_name, platform_name, component_name,release_name){
+  console.log("get_diff started")
+  $("#loading").show()
   clear_and_hide_current_output()
   clear_and_hide_command_section()
   clear_and_hide_link_section()
   clear_and_hide_modify_section()
   let new_command_list = []
   let current_command_list = []
+  let new_link_list = []
+  let current_link_list = []
+
   //taking data from draft collection
-  let temp_list = []
+  let temp_cmd_draft_list = []
   collection_data.forEach(function(item){
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
-      temp_list.push(item.commands)
+      temp_cmd_draft_list.push(item.commands)
     }  
   })
-  new_command_list = temp_list[0]
+  let temp_lnk_draft_list = []
+  collection_data.forEach(function(item){
+    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+      temp_lnk_draft_list.push(item.links)
+    }  
+  })
+  new_command_list = temp_cmd_draft_list[0]
+  new_link_list = temp_lnk_draft_list[0]
   if (new_command_list){
     new_command_list.forEach(function(item){
       $("#new_commands").text($("#new_commands").text() + item +"\n");
     });
-  }  
-  //taking the same data from non-draft collection
-  let original_collection_name = collection_name.replace('-draft','')
-  let inputs = {"action":"get_command_diff", "collection":original_collection_name, "platform":platform_name, "platform":platform_name, "component":component_name, "release":release_name}
-  let post_data = {name: task_name, input: inputs}
-  $("#loading").show()
-  $.post({url: link, dataType: "json", data: post_data})
-    .done(function(result){
-      if(result.data.variables._0){
-        current_command_list = result.data.variables._0
-        if (current_command_list){
-          current_command_list.forEach(function(item){
-            $("#current_commands").text($("#current_commands").text() + item +"\n");
-          });
-        }
-        console.log("New commands", new_command_list)
-        console.log("Current commands", current_command_list)
-
-        console.log("+++ current cmd   --- new cmd")
-        let current_new = array_diff(current_command_list, new_command_list)
-        console.log(current_new)
-        console.log("+++ new cmd   --- current cmd")
-        let new_current = array_diff(new_command_list, current_command_list)
-        console.log(new_current)
-
-        if (current_new){
-          $("#diff_commands").text($("#diff_commands").text() + "+++ Current command --- New command" + "\n");
-          current_new.forEach(function(item){
-            $("#diff_commands").text($("#diff_commands").text() + item +"\n");
-          });
-        }
-        if (new_current){
-          $("#diff_commands").text($("#diff_commands").text() + "+++ New command --- Current command" +"\n");
-          new_current.forEach(function(item){
-            $("#diff_commands").text($("#diff_commands").text() + item +"\n");
-          });
-        }
-
-        $("#loading").hide()
-        $("#command_section").show()
-        clear_and_hide_buttons()
-        $("#button_section").show()
-        submit_buttons.forEach(function(item){
-          $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdiffcmd" + "'>" + item + "</button>")
-        })
-      }
-  });
-}
-
-function get_link_diff(collection_name, platform_name, component_name,release_name){
-  console.log("get_link_diff started - calling BDB")
-  clear_and_hide_current_output()
-  clear_and_hide_command_section()
-  clear_and_hide_link_section()
-  clear_and_hide_modify_section()
-  let new_link_list = []
-  let current_link_list = []
-  //taking data from draft collection
-  let temp_list = []
-  collection_data.forEach(function(item){
-    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
-      temp_list.push(item.links)
-    }  
-  })
-  new_link_list = temp_list[0]
+  }
   if (new_link_list){
     new_link_list.forEach(function(item){
       $("#new_links").text($("#new_links").text() + item +"\n");
     });
-  }  
+  }
+
   //taking the same data from non-draft collection
   let original_collection_name = collection_name.replace('-draft','')
-  let inputs = {"action":"get_link_diff", "collection":original_collection_name, "platform":platform_name, "platform":platform_name, "component":component_name, "release":release_name}
+  let inputs = {"action":"get_collection_data", "collection":original_collection_name}
   let post_data = {name: task_name, input: inputs}
-  $("#loading").show()
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
-      if(result.data.variables._0){
-        current_link_list = result.data.variables._0
-        if (current_link_list){
-          current_link_list.forEach(function(item){
-            $("#current_links").text($("#current_links").text() + item +"\n");
-          });
-        }
-        console.log("New Links", new_link_list)
-        console.log("Current links", current_link_list)
-
-        console.log("+++ current links   --- new links")
-        let current_new = array_diff(current_link_list, new_link_list)
-        console.log(current_new)
-        console.log("+++ new links   --- current links")
-        let new_current = array_diff(new_link_list, current_link_list)
-        console.log(new_current)
-
-        if (current_new){
-          $("#diff_links").text($("#diff_links").text() + "+++ Current command --- New command" + "\n");
-          current_new.forEach(function(item){
-            $("#diff_links").text($("#diff_links").text() + item +"\n");
-          });
-        }
-        if (new_current){
-          $("#diff_links").text($("#diff_links").text() + "+++ New command --- Current command" +"\n");
-          new_current.forEach(function(item){
-            $("#diff_links").text($("#diff_links").text() + item +"\n");
-          });
-        }
-
-        $("#loading").hide()
-        $("#link_section").show()
-        clear_and_hide_buttons()
-        $("#button_section").show()
-        submit_buttons.forEach(function(item){
-          $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdifflink" + "'>" + item + "</button>")
-        })
+    if(result.data.variables._0){
+      collection_data_diff = result.data.variables._0
+      let temp_cmd_list = []
+      collection_data_diff.forEach(function(item){
+      if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+        temp_cmd_list.push(item.commands)
+        }  
+      })
+      let temp_lnk_list = []
+      collection_data_diff.forEach(function(item){
+      if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+        temp_lnk_list.push(item.links)
+        }  
+      })
+      current_command_list = temp_cmd_list[0]
+      current_link_list = temp_lnk_list[0]
+      if (current_command_list){
+        current_command_list.forEach(function(item){
+          $("#current_commands").text($("#current_commands").text() + item +"\n");
+        });
       }
+      if (current_link_list){
+        current_link_list.forEach(function(item){
+          $("#current_links").text($("#current_links").text() + item +"\n");
+        });
+      }
+      let current_new_cmd = array_diff(current_command_list, new_command_list)
+      let new_current_cmd = array_diff(new_command_list, current_command_list)
+      let current_new_lnk = array_diff(current_link_list, new_link_list)
+      let new_current_lnk = array_diff(new_link_list, current_link_list)
+
+      if (current_new_cmd){
+        $("#diff_commands").text($("#diff_commands").text() + "+++ Current command --- New command" + "\n");
+        current_new_cmd.forEach(function(item){
+          $("#diff_commands").text($("#diff_commands").text() + item +"\n");
+        });
+      }
+      if (new_current_cmd){
+        $("#diff_commands").text($("#diff_commands").text() + "+++ New command --- Current command" +"\n");
+        new_current_cmd.forEach(function(item){
+          $("#diff_commands").text($("#diff_commands").text() + item +"\n");
+        });
+      }
+      if (current_new_lnk){
+        $("#diff_links").text($("#diff_links").text() + "+++ Current links --- New links" + "\n");
+        current_new_lnk.forEach(function(item){
+          $("#diff_links").text($("#diff_links").text() + item +"\n");
+        });
+      }
+      if (new_current_lnk){
+        $("#diff_links").text($("#diff_links").text() + "+++ New links --- Current links" +"\n");
+        new_current_lnk.forEach(function(item){
+          $("#diff_links").text($("#diff_links").text() + item +"\n");
+        });
+      }
+
+      $("#loading").hide()
+      $("#command_section").show()
+      $("#link_section").show()
+      clear_and_hide_buttons()
+      $("#button_section").show()
+      submit_buttons.forEach(function(item){
+        $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdiff" + "'>" + item + "</button>")
+      });
+    }  
   });
 }

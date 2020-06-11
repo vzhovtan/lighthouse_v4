@@ -1,4 +1,4 @@
-console.log("new function other - rel June 10.5")
+console.log("new function other - June11")
 
 function create_new_platform(collection_name){
   console.log("Create new platform function started" + collection_name)
@@ -7,16 +7,6 @@ function create_new_platform(collection_name){
 
 function create_new_component(collection_name, platform_name) {
   console.log("Create new component function started" + collection_name + platform_name)
-}
-
-
-function approve_doc(collection_name, platform_name, component_name,release_name, post_data){
-  console.log("Approve document function started" + collection_name + platform_name + component_name + release_name + post_data)
-}
-
-
-function delete_doc(collection_name, platform_name, component_name,release_name, post_data){
-  console.log("Delete document function started" + collection_name + platform_name + component_name + release_name + post_data)
 }
 
 
@@ -40,7 +30,7 @@ function modify_doc(collection_name, platform_name, component_name, release_name
 
   if (command_list[0]){
     command_list[0].forEach(function(item){    
-      $("#modify_commands").val($("#modify_commands").val() + item +"\n");
+      $("#modify_commands").val($("#modify_commands").val() + item + "\n");
     })
   }
   if (link_list[0]){
@@ -56,16 +46,97 @@ function modify_doc(collection_name, platform_name, component_name, release_name
 }
 
 
-function preview (collection_name, platform_name, component_name, release_name, context){
-  console.log("Preview function called" + collection_name + platform_name + component_name + release_name + context)
+function submit_changes(collection_name, platform_name, component_name, release_name, context){
+  $("#loading").show()
+  console.log("Submit changes function started" + collection_name + platform_name + component_name + release_name + context)
   let cmd = []
   let links = []
   if (context.includes("modify")){
     cmd  = $("#modify_commands").val().split("\n")
     links = $("#modify_links").val().split("\n")
-  } else if(context.includes("getdiffcmd")){
+  } else if(context.includes("getdiff")){
     cmd  = $("#new_commands").val().split("\n")
-  } else if(context.includes("getdifflink")){
+    links = $("#new_links").val().split("\n")
+  }
+  let inputs = {"action":"submit_changes", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name, "commands": cmd, "links": links}
+  let post_data = {name: task_name, input: inputs}
+  console.log(cmd)
+  console.log(links)
+  console.log(post_data)
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+        if(result.data.variables._0){
+          $("#loading").hide()
+          openModal(result.data.variables._0);
+          clear_all()
+          $("#release > button").removeClass("btn--highlight")
+        }
+    });
+}
+
+
+function cancel_changes(collection_name, platform_name, component_name,release_name){
+  console.log("Cancel changes function started" + collection_name + platform_name + component_name + release_name)
+  clear_all()
+  $("#release > button").removeClass("btn--highlight")
+}
+
+
+function approve_doc(collection_name, platform_name, component_name,release_name){
+  $("#loading").show()
+  console.log("Approve document function called " + collection_name + platform_name + component_name + release_name)
+  let inputs = {"action":"approve_document", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name}
+  let post_data = {name: task_name, input: inputs}
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+      if(result.data.variables._0){
+        clear_all()
+        clear_and_hide_containers()
+        $("#platform > button").removeClass("btn--highlight")
+        $("#component > button").removeClass("btn--highlight")
+        $("#release > button").removeClass("btn--highlight")
+        $("#loading").hide()
+        openModal(result.data.variables._0)
+        let inputs = {"action":"get_collection_data", "collection":collection_name}
+        let post_data = {name: task_name, input: inputs}
+        get_platform_list(collection_name, post_data)
+      }
+  });
+}
+
+
+function delete_doc(collection_name, platform_name, component_name, release_name){
+  $("#loading").show()
+  console.log("Delete document function called " + collection_name + platform_name + component_name + release_name)
+  let inputs = {"action":"delete_document", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name}
+  let post_data = {name: task_name, input: inputs}
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+      if(result.data.variables._0){
+        clear_all()
+        clear_and_hide_containers()
+        $("#platform > button").removeClass("btn--highlight")
+        $("#component > button").removeClass("btn--highlight")
+        $("#release > button").removeClass("btn--highlight")
+        $("#loading").hide()
+        openModal(result.data.variables._0)
+        let inputs = {"action":"get_collection_data", "collection":collection_name}
+        let post_data = {name: task_name, input: inputs}
+        get_platform_list(collection_name, post_data)
+      }
+  });
+}
+
+
+function preview (collection_name, platform_name, component_name, release_name, context){
+  console.log("Preview function called " + collection_name + platform_name + component_name + release_name + context)
+  let cmd = []
+  let links = []
+  if (context.includes("modify")){
+    cmd  = $("#modify_commands").val().split("\n")
+    links = $("#modify_links").val().split("\n")
+  } else if(context.includes("getdiff")){
+    cmd  = $("#new_commands").val().split("\n")
     links = $("#new_links").val().split("\n")
   }
   console.log(cmd)
@@ -120,37 +191,6 @@ function preview (collection_name, platform_name, component_name, release_name, 
   $("#admin_button > button").removeClass("btn--highlight")
   user_view_modal = PaneOpen(content)
   user_view_modal.show()
-}
-
-
-function submit_changes(collection_name, platform_name, component_name, release_name, context){
-  console.log("Submit changes function started" + collection_name + platform_name + component_name + release_name + context)
-  let cmd = []
-  let links = []
-  if (context.includes("modify")){
-    cmd  = $("#modify_commands").val().split("\n")
-    links = $("#modify_links").val().split("\n")
-  } else if(context.includes("getdiffcmd")){
-    cmd  = $("#new_commands").val().split("\n")
-  } else if(context.includes("getdifflink")){
-    links = $("#new_links").val().split("\n")
-  }
-  let inputs = {"action":"submit_changes", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name}
-  let post_data = {name: task_name, input: inputs}
-  console.log(cmd)
-  console.log(links)
-  console.log(post_data)
-}
-
-
-function cancel_changes(collection_name, platform_name, component_name,release_name){
-  console.log("Cancel changes function started" + collection_name + platform_name + component_name + release_name)
-  clear_and_hide_current_output()
-  clear_and_hide_command_section()
-  clear_and_hide_link_section()
-  clear_and_hide_modify_section()
-  clear_and_hide_buttons()
-  $("#release > button").removeClass("btn--highlight")
 }
 
 

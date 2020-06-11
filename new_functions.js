@@ -1,8 +1,6 @@
 $(document).ready(function(){
-  //for the debugging
   $("#loading").hide()
-  //remove above line after deugging
-  console.log("new function  - - rel June 10.4")
+  console.log("new function  - June11")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
@@ -84,29 +82,24 @@ $(document).ready(function(){
     let context = $(this).attr("id").toLowerCase().split("_")[4]
     let action_name = $(this).text().toLowerCase()
     if (action_name.includes('final')){
-        //data taken from collection in DB
+        //data taken from collection in DB in memory
         get_final_view(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('preview')){
         //data taken from text form
         preview (collection_name, platform_name, component_name, release_name, context)
-    } else if (action_name.includes('command diff')){
-        get_cmd_diff(collection_name, platform_name, component_name,release_name)
-    } else if (action_name.includes('link diff')){
-        get_link_diff(collection_name, platform_name, component_name,release_name)
+    } else if (action_name.includes('diff')){
+        get_diff(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('approve')){
-        let inputs = {}
-        let post_data = {name: task_name, input: inputs};
-        approve_doc(collection_name, platform_name, component_name,release_name, post_data)
+        approve_doc(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('delete')){
-        let inputs = {}
-        let post_data = {name: task_name, input: inputs};
-        delete_doc(collection_name, platform_name, component_name,release_name, post_data)
+        delete_doc(collection_name, platform_name, component_name, release_name)
     } else if (action_name.includes('modify')){
         modify_doc(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('submit')){
         //data taken from text form
         submit_changes(collection_name, platform_name, component_name, release_name, context)
     } else if (action_name.includes('cancel')){
+        //cancle all changes and clear the screen
         cancel_changes(collection_name, platform_name, component_name,release_name)
     }
   });
