@@ -32,9 +32,12 @@ def task(env, action, collection="None", platform="None", release="None", compon
     elif backend_action == "get_content_final":
         content_data = get_content_final (collection, platform, component, release, mydb4)
         result.append(content_data)
-    elif backend_action == "submit_changes":
-        change_result = submit_changes (collection, platform, component, release, commands, links, userid, mydb4)
+    elif backend_action == "submit_changes_user":
+        change_result = submit_changes_user (collection, platform, component, release, commands, links, userid, mydb4)
         result.append(change_result)
+    elif backend_action == "submit_changes_admin":
+        change_result = submit_changes_admin (collection, platform, component, release, commands, links, userid, mydb4)
+        result.append(change_result)    
     elif backend_action == "delete_document":
         del_result = delete_doc (collection, platform, component, release, userid, mydb4)
         result.append(del_result) 
@@ -142,35 +145,57 @@ def get_content_final (collection, platform, component, release, mydb4):
 
     return content_final
 
-def submit_changes (collection, platform, component, release, commands, links, userid, mydb4):
+def submit_changes_user (collection, platform, component, release, commands, links, userid, mydb4):
     """
-    Update MongoDB with command and list for specific collection/platform/release/component
+    Update MongoDB draft collection with command and list for specific collection/platform/release/component
+    submitted by regular user
     """
     content = ""
     submitted_doc = {}
     db_dict = {"platform": platform, "component": component, "release": release}
+    
     submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
-    platform, component, release, commands.split("\n"), links.split("\n"), userid
-
-    if "draft" in collection:
-        collection_to_update = collection.replace("-draft", "")
-        replace = mydb4[collection_to_update].replace_one(db_dict, submitted_doc, True)
-        replace_result = replace.modified_count
-        remove = mydb4[collection].delete_one(db_dict)
-        remove_result = remove.deleted_count
-        if replace_result >= 0 and remove_result == 1:
-            content = "Document update was successful" + userid            
+    platform, component, release, commands, links, userid
+    
+    doc_exist_flag = mydb4[collection].find_one(db_dict)
+    if not doc_exist_flag:
+        new_doc = mydb4[collection].insert_one(submitted_doc)
+        if new_doc.acknowledged:
+            content = "New document submitted with id " + str(new_doc.inserted_id) + " by " + userid + " for review and approval"
         else:
-            content = "There was an error with update"           
+            content = "Error with submitting new document"    
     else:
-        collection_to_update = collection + "-draft"
-        doc_draft = mydb4[collection_to_update].find_one(db_dict)
-        if not doc_draft:
-            new_doc = mydb4[collection_to_update].insert_one(submitted_doc)
-            content = "New document id in DB " + new_doc.inserted_id + " submitted by " + useriid
-        else:
-            content = "Similar document for the same platform/component/release is under review already"
+        content = "Similar document for the same platform/component/release is under review already"
 
+    return content
+
+def submit_changes_admin (collection, platform, component, release, commands, links, userid, mydb4):
+    """
+    Update MongoDB production collection with command and list for specific collection/platform/release/component
+    submitted by admin and deletion of draft documetn for the same platform/release/component
+    """
+    content = ""
+    submitted_doc = {}
+    db_dict = {"platform": platform, "component": component, "release": release}
+    
+    submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
+    platform, component, release, commands, links, userid
+
+    replaced_doc = mydb4[collection].replace_one(db_dict, submitted_doc, True)
+    if replaced_doc.acknowledged:
+        content = "Document ??? updated by " + userid + " in production collection"
+    else:
+        content = "Error with updating production document"
+    
+    content += "\n"
+    
+    draft_collection = collection + "-draft"
+    removed_doc = mydb4[draft_collection].delete_one(db_dict)
+    if removed_doc.acknowledged:
+        content += "Draft version of the document has been deleted"
+    else:
+        content += "Error with deletion of the draft document"    
+    
     return content
 
 def delete_doc (collection, platform, component, release, userid, mydb4):
@@ -179,44 +204,39 @@ def delete_doc (collection, platform, component, release, userid, mydb4):
     """
     content = ""
     db_dict = {"platform": platform, "component": component, "release": release}
-    remove = mydb4[collection].delete_one(db_dict)
-    remove_result = remove.deleted_count
-    if remove_result == 1:
+    removed_doc = mydb4[collection].delete_one(db_dict)
+    if removed_doc.acknowledged:
         content = "Document removed by " + userid
     else:
-        content = "There was an error with update"
+        content = "There was an error with document removal"
 
     return content
 
 def approve_doc (collection, platform, component, release, userid, mydb4):
     """
-    Approve document from JS protal and submit it in MongoDB for specific collection/platform/release/component
-    This one is different from submit function which takes the data from JS form and this one takes data from already 
-    submmited documents in '-draft' collection and just put them into 'production' collection
+    Approve the entire document form draft colleciton without editing
     """
     content = ""
+    draft_collection = collection + "-draft"
     submitted_doc = {}
     db_dict = {"platform": platform, "component": component, "release": release}
-    collection_to_update = collection.replace("-draft", "")
     draft_doc = mydb4[collection].find_one(db_dict)
     if draft_doc:
         submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
-            draft_doc.get("platform", ""), draft_doc.get("component", ""), draft_doc.get("release", ""), draft_doc.get("commands", ""), draft_doc.get("links", ""), userid
+            draft_doc.get("platform"), draft_doc.get("component"), draft_doc.get("release"), draft_doc.get("commands", " "), draft_doc.get("links", " "), userid
 
-    print("draft document " + draft_doc)
-    print("submitted document " + submitted_doc)
-
-    replace = mydb4[collection_to_update].replace_one(db_dict, submitted_doc, True)
-    replace_result = replace.modified_count
-    remove = mydb4[collection].delete_one(db_dict)
-    remove_result = remove.deleted_count
-    if replace_result >= 0 and remove_result == 1:
-        content = "Document approval was successful" + userid            
+    replaced_doc = mydb4[collection].replace_one(db_dict, submitted_doc, True)
+    if replaced_doc.acknowledged:
+        content = content = "Document ??? updated by " + userid + " in production collection"
     else:
-        content = "There was an error with approval"
+        content = "Error with updating production document"
+    
+    content += "\n"
+    
+    removed_doc = mydb4[draft_collection].delete_one(db_dict)
+    if removed_doc.acknowledged:
+        content += "Draft version of the document has been deleted"
+    else:
+        content += "Error with deletion of the draft document"   
 
-    print("replace count " + replace_result)
-    print("removed delted count " + remove_result)
     return content
-
-

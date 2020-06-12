@@ -1,17 +1,17 @@
-console.log("new function other - June11")
+console.log("new function other - June 12")
 
 function create_new_platform(collection_name){
-  console.log("Create new platform function started" + collection_name)
+  console.log("Create new platform function called " + " " + collection_name + " ")
 }
   
 
 function create_new_component(collection_name, platform_name) {
-  console.log("Create new component function started" + collection_name + platform_name)
+  console.log("Create new component function called " ++ " " + collection_name + " " + platform_name + " ")
 }
 
 
 function modify_doc(collection_name, platform_name, component_name, release_name){
-  console.log("Modify document function called" + collection_name + platform_name + component_name + release_name)
+  console.log("Modify document function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " ")
   clear_and_hide_current_output()
   clear_and_hide_command_section()
   clear_and_hide_link_section()
@@ -45,29 +45,21 @@ function modify_doc(collection_name, platform_name, component_name, release_name
   })
 }
 
-
-function submit_changes(collection_name, platform_name, component_name, release_name, context){
+function submit_changes_user(collection_name, platform_name, component_name, release_name, context){
   $("#loading").show()
-  console.log("Submit changes function started" + collection_name + platform_name + component_name + release_name + context)
-  let cmd = []
-  let links = []
-  if (context.includes("modify")){
-    cmd  = $("#modify_commands").val().split("\n")
-    links = $("#modify_links").val().split("\n")
-  } else if(context.includes("getdiff")){
-    cmd  = $("#new_commands").val().split("\n")
-    links = $("#new_links").val().split("\n")
-  }
-  let inputs = {"action":"submit_changes", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name, "commands": cmd, "links": links}
+  console.log("Submit changes for end-user function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " " + context)
+  let cmd = $("#modify_commands").val().split("\n")
+  let links = $("#modify_links").val().split("\n")
+  let collection_to_submit = collection_name + "-draft"
+  let inputs = {"action":"submit_changes_user", "collection":collection_to_submit, "platform":platform_name, "component":component_name, "release":release_name, "commands": cmd, "links": links}
   let post_data = {name: task_name, input: inputs}
-  console.log(cmd)
-  console.log(links)
-  console.log(post_data)
+  console.log("BDB input data ", post_data)
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
+          console.log("BDB result ", result.data.variables._0)
           $("#loading").hide()
-          openModal(result.data.variables._0);
+          openModal(result.data.variables._0)
           clear_all()
           $("#release > button").removeClass("btn--highlight")
         }
@@ -75,21 +67,59 @@ function submit_changes(collection_name, platform_name, component_name, release_
 }
 
 
+function submit_changes_admin(collection_name, platform_name, component_name, release_name, context){
+  $("#loading").show()
+  console.log("Submit changes for admin function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " " + context)
+  if (context.include("modify")){
+    console.log("context "+ context)
+    let cmd = $("#modify_commands").val().split("\n")
+    let links = $("#modify_links").val().split("\n")
+  } else if (context.includes("getdiff")){
+    console.log("context "+ context)
+    let cmd = $("#new_commands").val().split("\n")
+    let links = $("#new_links").val().split("\n")
+  }
+  let collection_to_submit = collection_name.replace('-draft','')
+  let inputs = {"action":"submit_changes_admin", "collection":collection_to_submit, "platform":platform_name, "component":component_name, "release":release_name, "commands": cmd, "links": links}
+  let post_data = {name: task_name, input: inputs}
+  console.log("BDB input data ", post_data)
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+        if(result.data.variables._0){
+          console.log("BDB result ", result.data.variables._0)
+          clear_all()
+          clear_and_hide_containers()
+          $("#platform > button").removeClass("btn--highlight")
+          $("#component > button").removeClass("btn--highlight")
+          $("#release > button").removeClass("btn--highlight")
+          $("#loading").hide()
+          openModal(result.data.variables._0)
+          let inputs = {"action":"get_collection_data", "collection":collection_name}
+          let post_data = {name: task_name, input: inputs}
+          get_platform_list(collection_name, post_data)
+        }
+    });
+}
+
+
 function cancel_changes(collection_name, platform_name, component_name,release_name){
-  console.log("Cancel changes function started" + collection_name + platform_name + component_name + release_name)
+  console.log("Cancel changes function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " ")
   clear_all()
   $("#release > button").removeClass("btn--highlight")
 }
 
 
-function approve_doc(collection_name, platform_name, component_name,release_name){
+function approve_doc(collection_name, platform_name, component_name, release_name){
   $("#loading").show()
-  console.log("Approve document function called " + collection_name + platform_name + component_name + release_name)
-  let inputs = {"action":"approve_document", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name}
+  console.log("Approve document function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " ")
+  let collection_to_submit = collection_name.replace('-draft','')
+  let inputs = {"action":"approve_document", "collection":collection_to_submit, "platform":platform_name, "component":component_name, "release":release_name}
   let post_data = {name: task_name, input: inputs}
+  console.log("BDB input data ", post_data)
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
       if(result.data.variables._0){
+        console.log("BDB result ", result.data.variables._0)
         clear_all()
         clear_and_hide_containers()
         $("#platform > button").removeClass("btn--highlight")
@@ -107,7 +137,7 @@ function approve_doc(collection_name, platform_name, component_name,release_name
 
 function delete_doc(collection_name, platform_name, component_name, release_name){
   $("#loading").show()
-  console.log("Delete document function called " + collection_name + platform_name + component_name + release_name)
+  console.log("Delete document function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " ")
   let inputs = {"action":"delete_document", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name}
   let post_data = {name: task_name, input: inputs}
   $.post({url: link, dataType: "json", data: post_data})
@@ -129,7 +159,7 @@ function delete_doc(collection_name, platform_name, component_name, release_name
 
 
 function preview (collection_name, platform_name, component_name, release_name, context){
-  console.log("Preview function called " + collection_name + platform_name + component_name + release_name + context)
+  console.log("Preview function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " " + context)
   let cmd = []
   let links = []
   if (context.includes("modify")){
@@ -253,29 +283,6 @@ function clear_all(){
   clear_and_hide_modify_section()
   clear_and_hide_buttons()
 }
-  
-
-//modal function below
-function PaneOpen(html){
-  let user_view_modal = picoModal({
-      content: html,
-      overlayClose: true,
-      closeButton: true,
-      width: "90%",
-  })
-  return user_view_modal
-}
-
-function openModal(text){
-  $("#modal-small").show()
-  $("#subtitle").html(text)
-}
-
-function closeModal(){
-  $("#modal-small").hide()
-  $("#subtitle").empty()
-}
-
 
 //custom functions below
 

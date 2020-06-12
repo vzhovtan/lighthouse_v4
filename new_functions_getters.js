@@ -1,4 +1,4 @@
-console.log("new function getters - rel June11")
+console.log("new function getters - rel June 12")
 
 function get_collection_list(){
   //using static list of collection
@@ -10,7 +10,7 @@ function get_collection_list(){
    
 function get_platform_list(collection_name, post_data){
   $("#loading").show()
-  console.log("get_platform_list called --> getting the entire collection data")
+  console.log("get_platform_list called --> getting the entire collection data and displaying the platform list only")
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
     if(result.data.variables._0){
@@ -38,7 +38,7 @@ function get_platform_list(collection_name, post_data){
 
 
 function get_component_list(collection_name, platform_name){
-  console.log("get_component_list called --> using collection_data")
+  console.log("get_component_list called --> using collection_data variables saved before")
   let component_list = []
   collection_data.forEach(function(item){
     if(item.platform == platform_name){
@@ -58,7 +58,7 @@ function get_component_list(collection_name, platform_name){
 }
   
 function get_release_list(collection_name, platform_name, component_name){
-  console.log("get_release_list called --> using collection_data")
+  console.log("get_release_list called --> using collection_data variables saved before")
   let release_list = []
   collection_data.forEach(function(item){
     if(item.platform == platform_name){
@@ -84,7 +84,7 @@ function get_release_list(collection_name, platform_name, component_name){
 }
 
 function get_content(collection_name, platform_name, release_name, component_name){
-  console.log("get_content started --> using collection_data")
+  console.log("get_content called --> using collection_data variables saved before")
   console.log(collection_name, platform_name, release_name, component_name)
   let command_list = []
   let link_list = []
@@ -133,7 +133,7 @@ function get_content(collection_name, platform_name, release_name, component_nam
 }
 
 function get_final_view(collection_name, platform_name, component_name,release_name){
-  console.log("get_final_view called --> using collection_data")
+  console.log("get_final_view called --> using collection_data variables saved before")
   let content = ""
   let header = "</div><br></div><div align='left'><img src='https://i.imgur.com/f0vBigO.jpg' alt=''></div>"
   let footer = "</div><br></div><div align='left'><a href='mailto:lighthouse-csone@cisco.com?Subject=Lighthouse%20Feedback' target='_top'>comments/questions/feedbacks</a></div><br>"
@@ -193,7 +193,7 @@ function get_final_view(collection_name, platform_name, component_name,release_n
 
 
 function get_diff(collection_name, platform_name, component_name,release_name){
-  console.log("get_diff started")
+  console.log("get_diff called - using collection_data variables saved before from draft colleciton and taking similar collection data from production one")
   $("#loading").show()
   clear_and_hide_current_output()
   clear_and_hide_command_section()

@@ -1,6 +1,6 @@
 $(document).ready(function(){
   $("#loading").hide()
-  console.log("new function  - June11")
+  console.log("new function  - June 12")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
@@ -82,25 +82,29 @@ $(document).ready(function(){
     let context = $(this).attr("id").toLowerCase().split("_")[4]
     let action_name = $(this).text().toLowerCase()
     if (action_name.includes('final')){
-        //data taken from collection in DB in memory
+      //data taken from collection in DB in memory
         get_final_view(collection_name, platform_name, component_name,release_name)
     } else if (action_name.includes('preview')){
-        //data taken from text form
+      //data taken from text form
         preview (collection_name, platform_name, component_name, release_name, context)
     } else if (action_name.includes('diff')){
-        get_diff(collection_name, platform_name, component_name,release_name)
+        get_diff(collection_name, platform_name, component_name, release_name)
     } else if (action_name.includes('approve')){
-        approve_doc(collection_name, platform_name, component_name,release_name)
+        approve_doc(collection_name, platform_name, component_name, release_name)
     } else if (action_name.includes('delete')){
         delete_doc(collection_name, platform_name, component_name, release_name)
     } else if (action_name.includes('modify')){
-        modify_doc(collection_name, platform_name, component_name,release_name)
+        modify_doc(collection_name, platform_name, component_name, release_name)
     } else if (action_name.includes('submit')){
-        //data taken from text form
-        submit_changes(collection_name, platform_name, component_name, release_name, context)
+      //data taken from text form
+        if (collection_name.includes('draft')){
+          submit_changes_admin(collection_name, platform_name, component_name, release_name, context)
+        } else {
+          submit_changes_user(collection_name, platform_name, component_name, release_name, context)
+        }
     } else if (action_name.includes('cancel')){
         //cancle all changes and clear the screen
-        cancel_changes(collection_name, platform_name, component_name,release_name)
+        cancel_changes(collection_name, platform_name, component_name, release_name)
     }
   });
 
@@ -109,3 +113,24 @@ $(document).ready(function(){
   });
 
 });
+
+//modal function below
+function PaneOpen(html){
+  let user_view_modal = picoModal({
+      content: html,
+      overlayClose: true,
+      closeButton: true,
+      width: "90%",
+  })
+  return user_view_modal
+}
+
+function openModal(text){
+  document.getElementById("modal-small").style.visibility = "visible";
+  document.getElementById("subtitle").innerHTML = text;
+}
+
+function closeModal(){
+  document.getElementById("subtitle").innerHTML = "";
+  document.getElementById("modal-small").style.visibility = "hidden"
+}
