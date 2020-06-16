@@ -1,6 +1,6 @@
 $(document).ready(function(){
   $("#loading").hide()
-  console.log("new function  - June 12")
+  console.log("new function  - June 16")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
@@ -108,10 +108,27 @@ $(document).ready(function(){
     }
   });
 
-  $('#reload').click(function() {
-    location.reload();
+  $('#new_input_button').on( 'click', 'button', function() {
+    $("#new_input_button > button").removeClass("btn--highlight")
+    $(this).addClass("btn btn--highlight")
+    let collection_name = $(this).attr("id").toLowerCase();
+    let platform_name = $('#new_platform_input').val();
+    let component_name = $('#new_component_input').val();
+    let release_name = $('#new_release_input').val();
+    let action_name = $(this).text().toLowerCase()
+    if (action_name.includes('preview')){
+        preview_new (collection_name, platform_name, component_name, release_name)
+    } else if (action_name.includes('submit')){
+        submit_changes_new(collection_name, platform_name, component_name, release_name)
+    } else if (action_name.includes('cancel')){
+        cancel_changes_new(collection_name, platform_name, component_name, release_name)
+    }
   });
 
+
+  $('#reload').click(() => {
+    location.reload();
+  });
 });
 
 //modal function below

@@ -70,6 +70,72 @@
         <p>Links section is intended to provide helpful links or BU alias for further investigation. Helpful resources troubleshooting could be tech-zone,
         Cisco Wikis, webex recording, topic or any Cisco documents.</p>
         <p>Please check the "Guidlines" section below to see how the new content should be formatted</p>
+      </div><br>
+
+      <div class="text-center">
+        <h2>General rules and guidelines</h2>
+      </div><br>
+
+      <div class="text-left">
+        <p>When entering new content, it’s very important to follow the below rules so your data becomes useful and presentable to all engineers.</p>
+      <ul>
+        <li>Make sure the commands are relevant and useful in troubleshooting a certain platform/sub-technology</li>
+        <li>Make sure the syntax is correct and the commands actually work on the platform intended.</li>
+        <li>When possible, please add a description/comment/instruction to commands to explain or add instruction or comment. (please check the formatting guidelines)</li>
+        <li>Notes/comments should be kept short, simple and easy to read.</li>
+        <li>The commands list shall be simplified and easy to read.</li>
+        <li>If the list is too long, please group  and divide into sections if possible.</li>
+      <ol type="a">
+          <li>Grouping is accomplished by grouping commands according to hierarchy, module and function or type or issue. (please check the formatting guidelines for more details)</li>
+          <li>Dividing into sections could be accomplished by adding headers. (please check the formatting guidelines for more details)</li>
+      </ol>
+        <li>Verify that the links and aliases included in the links section are working and correct before adding.</li>
+      </ul>
+      </div><br>
+
+      <div class="text-center">
+        h2>Formatting guidelines</h2>
+      </div><br>
+
+      <div class="text-left">
+        <p>For successful entry of content and best presentation on CSone, please follow those guild lines in the following areas:</p>
+          <p><h6>Platform and Technology:</h6></p>
+        <ul>
+          <li>When creating a new platform or new technology, please make sure that there’s <b>no spaces and no special characters</b> in the string and replace by the minus symbol ‘-‘ if needed.</li>
+        </ul>
+          <p><h6>Commands section:</h6></p>
+        <ul>
+          <li>Variables shall always be in square brackets [ ]</li>
+          <ul>
+            <li><i>Example: show logging location [node-id]</i></li>
+          </ul>
+          <li>To add notes/description/comment or instruction, use double forward slashes ‘//’ characters prior to a description/comment and include the description/comment in parentheses ‘( )’</li>
+          <ul>
+            <li><i>Example: show interface [int-type][int-number]     //(look for drops incrementing)</i></li>
+          </ul>
+          <li>Grouping</li>
+          <ul>
+            <li><i>(Ex:by hierarchy):<br>&emsp;show controllers fabric fia<br>&emsp;show controllers fabric fia link-status location []<br>&emsp;show controllers fabric fia stats<br>&emsp;show controllers fabric fia stats location []<br>&emsp;show controllers fabric fia drops [ ingress | egress ] loc[]
+            </i></li>
+          </ul>
+          <li>Dividing into sections could be accomplished to group certain collection of commands together by writing a title and using the colon symbol after the title/header:</li>
+          <ul>
+            <li><i>Example:<br>&emsp;&emsp;show techs:<br>&emsp;&emsp;&emsp;show tech-support file [media-id]:[file-name]<br>&emsp;&emsp;&emsp;show tech routing bgp<br>&emsp;&emsp;&emsp;show tech multicast<br>&emsp;&emsp;traces:<br>&emsp;&emsp;&emsp;show tcp trace<br>&emsp;&emsp;&emsp;show ... trace
+            </i></li>
+          </ul>
+        </ul>
+          <p><h6>Links section:</h6></p>
+        <ul>
+          <li>A header to the link is recommended to give a brief explanation of what the link contains.</li>
+          <li>The header shall come prior to the link and separated by ’ >’ sign.</li>
+          <ul>
+            <li><i>Example:<br>&emsp;Wiki - Fabric Driver > https://wiki.cisco.com/display/GSRIN/Fabric+Driver</i></li>
+          </ul>
+          <li>Email alias can be added. The ‘@’ sign has to be included for the system to recognize that it’s an email address and format correctly.</li>
+          <ul>
+            <li><i>Example:<br>&emsp;cs-xr12000@cisco.com</i></li>
+          </ul>
+        </ul>
       </div>
     </div>
   </div>
@@ -171,7 +237,61 @@
 
 </div>
 
-<!-- Button section -->
+<!-- Section "new platform/component form" -->
+<!-- New platform -->
+<div class="container" id="new_form">
+  <div class="section"> 
+    <div class="col-md-4">
+      <div class="form-group form-group--helper">
+        <div class="form-group__text">
+          <input id="new_platform_input" type="text" class="input--dirty input--invalid-required" value="" required>
+          <label for="new_platform_input">Enter new platform name</label>
+        </div>
+        <div class="help-block text-warning">
+          <span>This is a required field</span>
+        </div>
+      </div>
+<!-- New component -->
+      <div class="form-group form-group--helper">
+        <div class="form-group__text">
+          <input id="new_component_input" type="text" class="input--dirty input--invalid-required" value="" required>
+          <label for="new_component_input">Enter new component name</label>
+        </div>
+        <div class="help-block text-warning">
+          <span>This is a required field</span>
+        </div>
+      </div>
+<!-- New release -->
+<div class="form-group form-group--helper">
+  <div class="form-group__text">
+    <input id="new_release_input" type="text" class="input--dirty input--invalid-required" value="" required>
+    <label for="new_release_input">Enter new release name (For IOS-XR platform it should be "release independent")</label>
+  </div>
+  <div class="help-block text-warning">
+    <span>This is a required field</span>
+  </div>
+</div>      
+</div>
+<!-- New commands -->
+  <div class="col-md-11 base-margin-top">
+    <form>
+      <textarea class="textarea" id='new_commands_input' rows="15" placeholder="Commands"></textarea>
+    </form>
+    <div class="help-block text-warning">
+      <span>This is a required field</span>
+    </div>
+  </div>
+<!-- New links -->
+  <div class="col-md-11 base-margin-top">
+    <form>
+      <textarea class="textarea" id='new_links_input' rows="15" placeholder="Links"></textarea>
+    </form>
+    <div class="help-block text-warning">
+      <span>This is a required field</span>
+    </div>
+  </div>
+  
+  <!-- Button section -->
 
 <div class="row" id="button_section">
   <div class="container">
@@ -181,6 +301,16 @@
   </div>
 </div>
 <br><br>
+
+<div class="row" id="button_section">
+  <div class="container">
+      <div class="section">
+        <div class="text-center" id="new_input_button"></div>
+      </div>
+  </div>
+</div>
+<br><br>
+
 <!-- Main container end-->
 
 <!-- Footer start-->

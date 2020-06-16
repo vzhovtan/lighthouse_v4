@@ -1,25 +1,45 @@
-console.log("new function other - June 12")
+console.log("new function other - June 16")
 
 function create_new_platform(collection_name){
-  console.log("Create new platform function called " + " " + collection_name + " ")
+  console.log("Create new platform function called " + " " + collection_name);
+  clear_and_hide_containers();
+  clear_and_hide_new_platform_component_section();
+  submit_buttons.forEach((item) => {
+    $("#new_input_button").append("<button class='btn btn--action'id='" + collection_name + "'>" + item + "</button>")
+  })
+  $("#new_form").show()
 }
   
 
 function create_new_component(collection_name, platform_name) {
-  console.log("Create new component function called " ++ " " + collection_name + " " + platform_name + " ")
+  console.log("Create new component function called " + " " + collection_name + " " + platform_name);
+  clear_and_hide_containers();
+  clear_and_hide_new_platform_component_section();
+  $("#new_platform").val(platform_name);
+  submit_buttons.forEach((item) => {
+    $("#new_input_button").append("<button class='btn btn--action'id='" + collection_name + "'>" + item + "</button>")
+  })
+  $("#new_form").show();
 }
 
+function preview_new (collection_name, platform_name, component_name, release_name){
+  console.log("Preview new function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name);
+}
+
+function submit_changes_new(collection_name, platform_name, component_name, release_name){
+  console.log("Submit changes new new function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name);
+}
+
+function cancel_changes_new(collection_name, platform_name, component_name, release_name){
+  console.log("Cancel changes new new function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name);
+}
 
 function modify_doc(collection_name, platform_name, component_name, release_name){
-  console.log("Modify document function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " ")
-  clear_and_hide_current_output()
-  clear_and_hide_command_section()
-  clear_and_hide_link_section()
-  clear_and_hide_modify_section()
-  clear_and_hide_buttons()
+  console.log("Modify document function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name)
+  clear_all()
   let command_list = []
   let link_list = []
-  collection_data.forEach(function(item){
+  collection_data.forEach((item) => {
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       command_list.push(item.commands)
       link_list.push(item.links)
@@ -29,18 +49,18 @@ function modify_doc(collection_name, platform_name, component_name, release_name
   console.log("Links", link_list)
 
   if (command_list[0]){
-    command_list[0].forEach(function(item){    
+    command_list[0].forEach((item) => {    
       $("#modify_commands").val($("#modify_commands").val() + item + "\n");
     })
   }
   if (link_list[0]){
-    link_list[0].forEach(function(item){    
+    link_list[0].forEach((item) => {    
       $("#modify_links").val($("#modify_links").val() + item +"\n");
     })
   }
   $("#modify_section").show()
   $("#button_section").show()
-  submit_buttons.forEach(function(item){
+  submit_buttons.forEach((item) => {
     $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "modify" + "'>" + item + "</button>")
   })
 }
@@ -276,12 +296,23 @@ function clear_and_hide_modify_section(){
 }
 
 
+function clear_and_hide_new_platform_component_section(){
+  $("#new_platform_input").val("")
+  $("#new_component_input").val("")
+  $("#new_release_input").val("")
+  $("#new_commands_input").val("")
+  $("#new_links_input").val("")
+  $("#new_form").hide()
+}
+
+
 function clear_all(){
   clear_and_hide_current_output()
   clear_and_hide_command_section()
   clear_and_hide_link_section()
   clear_and_hide_modify_section()
   clear_and_hide_buttons()
+  clear_and_hide_new_platform_component_section()
 }
 
 //custom functions below
