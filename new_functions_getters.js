@@ -1,4 +1,4 @@
-console.log("new function getters - rel June 16")
+console.log("new function getters - June 17")
 
 function get_collection_list(){
   //using static list of collection
@@ -34,8 +34,6 @@ function get_platform_list(collection_name, post_data){
     $("#container_platform").show()
   });
 }
-
-
 
 function get_component_list(collection_name, platform_name){
   console.log("get_component_list called --> using collection_data variables saved before")
@@ -97,13 +95,13 @@ function get_content(collection_name, platform_name, release_name, component_nam
   $("#current_output").empty()
   $("#current_output_section").show()
   let output= "<br><h6>" + platform_name + " - " + component_name + " - " + release_name + "</h6><br>"
-  if (command_list.length > 0){
+  if (command_list){
     output += "<br><h6>Command list</h6><br>"
     command_list.forEach((item) => {    
       output += item + "<br>"
     })
   }
-  if (link_list.length > 0){
+  if (link_list){
     output += "<br><h6>Link list</h6><br>"
     link_list.forEach((item) => {    
       output += item + "<br>"
@@ -147,7 +145,7 @@ function get_final_view(collection_name, platform_name, component_name,release_n
       link_list = item.links
     }  
   })
-  if (command_list.length > 0){
+  if (command_list){
     content += cmd_header
     for (item of command_list) {
       if (item.includes("//")) {
@@ -166,7 +164,7 @@ function get_final_view(collection_name, platform_name, component_name,release_n
     }
   }
 
-  if(link_list.length > 0){
+  if(link_list){
     content += link_header
     for (item of link_list) {
       if (item.includes("http")|| item.includes("https")) {
@@ -212,19 +210,19 @@ function get_diff(collection_name, platform_name, component_name,release_name){
   console.log("New command list " + new_command_list)
   console.log("New link list " + new_link_list)
   
-  if (new_command_list.length > 0){
+  if (new_command_list){
     new_command_list.forEach((item) => {
       $("#new_commands").text($("#new_commands").text() + item +"\n");
     });
   }
-  if (new_link_list.length > 0){
+  if (new_link_list){
     new_link_list.forEach((item) => {
       $("#new_links").text($("#new_links").text() + item +"\n");
     });
   }
 
   //taking the same data from non-draft collection
-  if (collection_data_diff=== undefined){
+  if (collection_data_diff === undefined){
     let original_collection_name = collection_name.replace('-draft','')
     let inputs = {"action":"get_collection_data", "collection":original_collection_name}
     let post_data = {name: task_name, input: inputs}
@@ -251,12 +249,12 @@ function get_diff(collection_name, platform_name, component_name,release_name){
 
         console.log("Current command list "+ current_command_list)
         console.log("Current link list " + current_link_list)
-        if (current_command_list.length > 0){
+        if (current_command_list){
           current_command_list.forEach((item) => {
             $("#current_commands").text($("#current_commands").text() + item +"\n");
           });
         }
-        if (current_link_list.length > 0){
+        if (current_link_list){
           current_link_list.forEach((item) => {
             $("#current_links").text($("#current_links").text() + item +"\n");
           });
@@ -266,25 +264,25 @@ function get_diff(collection_name, platform_name, component_name,release_name){
         current_new_lnk = array_diff(current_link_list, new_link_list)
         new_current_lnk = array_diff(new_link_list, current_link_list)
         
-        if (current_new_cmd.length > 0){
+        if (current_new_cmd){
           $("#diff_commands").text($("#diff_commands").text() + "+++ Current command --- New command" + "\n");
           current_new_cmd.forEach((item) => {
             $("#diff_commands").text($("#diff_commands").text() + item +"\n");
           });
         }
-        if (new_current_cmd.length > 0){
+        if (new_current_cmd){
           $("#diff_commands").text($("#diff_commands").text() + "+++ New command --- Current command" +"\n");
           new_current_cmd.forEach((item) => {
             $("#diff_commands").text($("#diff_commands").text() + item +"\n");
           });
         }
-        if (current_new_lnk.length > 0){
+        if (current_new_lnk){
           $("#diff_links").text($("#diff_links").text() + "+++ Current links --- New links" + "\n");
           current_new_lnk.forEach((item) => {
             $("#diff_links").text($("#diff_links").text() + item +"\n");
           });
         }
-        if (new_current_lnk.length > 0){
+        if (new_current_lnk){
           $("#diff_links").text($("#diff_links").text() + "+++ New links --- Current links" +"\n");
           new_current_lnk.forEach((item) => {
             $("#diff_links").text($("#diff_links").text() + item +"\n");
@@ -320,12 +318,12 @@ function get_diff(collection_name, platform_name, component_name,release_name){
 
     console.log("Current command list "+ current_command_list)
     console.log("Current link list " + current_link_list)
-    if (current_command_list.length > 0){
+    if (current_command_list){
       current_command_list.forEach((item) => {
         $("#current_commands").text($("#current_commands").text() + item +"\n");
       });
     }
-    if (current_link_list.length > 0){
+    if (current_link_list){
       current_link_list.forEach((item) => {
         $("#current_links").text($("#current_links").text() + item +"\n");
       });
@@ -335,25 +333,25 @@ function get_diff(collection_name, platform_name, component_name,release_name){
     current_new_lnk = array_diff(current_link_list, new_link_list)
     new_current_lnk = array_diff(new_link_list, current_link_list)
     
-    if (current_new_cmd.length > 0){
+    if (current_new_cmd){
       $("#diff_commands").text($("#diff_commands").text() + "+++ Current command --- New command" + "\n");
       current_new_cmd.forEach((item) => {
         $("#diff_commands").text($("#diff_commands").text() + item +"\n");
       });
     }
-    if (new_current_cmd.length > 0){
+    if (new_current_cmd){
       $("#diff_commands").text($("#diff_commands").text() + "+++ New command --- Current command" +"\n");
       new_current_cmd.forEach((item) => {
         $("#diff_commands").text($("#diff_commands").text() + item +"\n");
       });
     }
-    if (current_new_lnk.length > 0){
+    if (current_new_lnk){
       $("#diff_links").text($("#diff_links").text() + "+++ Current links --- New links" + "\n");
       current_new_lnk.forEach((item) => {
         $("#diff_links").text($("#diff_links").text() + item +"\n");
       });
     }
-    if (new_current_lnk.length > 0){
+    if (new_current_lnk){
       $("#diff_links").text($("#diff_links").text() + "+++ New links --- Current links" +"\n");
       new_current_lnk.forEach((item) => {
         $("#diff_links").text($("#diff_links").text() + item +"\n");

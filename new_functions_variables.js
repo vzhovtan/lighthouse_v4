@@ -1,4 +1,4 @@
-console.log("new function variables - rel June 16")
+console.log("new function variables - June 17")
 //Single file to save all JS vriables
 
 let link = '/api/v2/jobs/lighthouse_v4_new_functions'

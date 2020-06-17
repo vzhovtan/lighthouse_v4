@@ -1,37 +1,44 @@
-console.log("new function other - June 16")
+console.log("new function other - June 17")
 
 function create_new_platform(collection_name){
   console.log("Create new platform function called " + " " + collection_name);
   clear_and_hide_containers();
   clear_and_hide_new_platform_component_section();
+  if (collection_name.includes("ios-xr")){
+    $("#new_release_input").val("Release Independent");
+  } else{
+    $("#new_release_input").val("");
+  }
   submit_buttons.forEach((item) => {
     $("#new_input_button").append("<button class='btn btn--action'id='" + collection_name + "'>" + item + "</button>")
   })
-  $("#new_form").show()
+  $("#new_button_section").show();
+  $("#new_form").show();
 }
   
-
 function create_new_component(collection_name, platform_name) {
   console.log("Create new component function called " + " " + collection_name + " " + platform_name);
   clear_and_hide_containers();
   clear_and_hide_new_platform_component_section();
   $("#new_platform").val(platform_name);
+  if (collection_name.includes("ios-xr")){
+    $("#new_release_input").val("Release Independent");
+  } else{
+    $("#new_release_input").val("");
+  }
   submit_buttons.forEach((item) => {
     $("#new_input_button").append("<button class='btn btn--action'id='" + collection_name + "'>" + item + "</button>")
   })
+  $("#new_button_section").show();
   $("#new_form").show();
 }
 
-function preview_new (collection_name, platform_name, component_name, release_name){
-  console.log("Preview new function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name);
-}
-
-function submit_changes_new(collection_name, platform_name, component_name, release_name){
-  console.log("Submit changes new new function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name);
-}
-
-function cancel_changes_new(collection_name, platform_name, component_name, release_name){
-  console.log("Cancel changes new new function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name);
+function cancel_changes_new(collection_name){
+  console.log("Cancel changes new new function called " + " " + collection_name);
+  clear_all();
+  let inputs = {"action":"get_collection_data", "collection":collection_name}
+  let post_data = {name: task_name, input: inputs}
+  get_platform_list(collection_name, post_data)
 }
 
 function modify_doc(collection_name, platform_name, component_name, release_name){
@@ -63,6 +70,29 @@ function modify_doc(collection_name, platform_name, component_name, release_name
   submit_buttons.forEach((item) => {
     $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "modify" + "'>" + item + "</button>")
   })
+}
+
+function submit_changes_new(collection_name, platform_name, component_name, release_name){
+  $("#loading").show()
+  console.log("Submit changes new function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name);
+  let cmd = $("#new_commands_input").val().split("\n")
+  let links = $("#new_links_input").val().split("\n")
+  let collection_to_submit = collection_name + "-draft"
+  let inputs = {"action":"submit_changes_user", "collection":collection_to_submit, "platform":platform_name, "component":component_name, "release":release_name, "commands": cmd, "links": links}
+  let post_data = {name: task_name, input: inputs}
+  console.log("BDB input data ", post_data)
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+        if(result.data.variables._0){
+          console.log("BDB result ", result.data.variables._0)
+          $("#loading").hide()
+          openModal(result.data.variables._0)
+          clear_all()
+          let inputs = {"action":"get_collection_data", "collection":collection_name}
+          let post_data = {name: task_name, input: inputs}
+          get_platform_list(collection_name, post_data)
+        }
+    });
 }
 
 function submit_changes_user(collection_name, platform_name, component_name, release_name, context){
@@ -188,6 +218,9 @@ function preview (collection_name, platform_name, component_name, release_name, 
   } else if(context.includes("getdiff")){
     cmd  = $("#new_commands").val().split("\n")
     links = $("#new_links").val().split("\n")
+  } else if(context.includes("newdata")){
+    cmd  = $("#new_commands_input").val().split("\n")
+    links = $("#new_links_input").val().split("\n")
   }
   console.log(cmd)
   console.log(links)
@@ -286,6 +319,8 @@ function clear_and_hide_link_section(){
 function clear_and_hide_buttons(){
   $("#admin_button").empty()
   $("#button_section").hide()
+  $("#new_input_button").empty();
+  $("#new_button_section").hide();
 }
 
 
