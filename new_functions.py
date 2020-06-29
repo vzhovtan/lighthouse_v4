@@ -66,7 +66,7 @@ def get_collection_list(mydb4):
 
 def get_collection_data(collection, mydb4):
     """
-    get entire collection data fo=ro specific collection to process further
+    get entire collection data for specific collection to process further
     """
     collection_data = []
 
