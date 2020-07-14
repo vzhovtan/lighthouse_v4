@@ -183,7 +183,7 @@ def submit_changes_admin (collection, platform, component, release, commands, li
 
     replaced_doc = mydb4[collection].replace_one(db_dict, submitted_doc, True)
     if replaced_doc.acknowledged:
-        content = "Document ??? updated by " + userid + " in production collection"
+        content = "Document updated by " + userid + " in production collection"
     else:
         content = "Error with updating production document"
     
@@ -220,14 +220,14 @@ def approve_doc (collection, platform, component, release, userid, mydb4):
     draft_collection = collection + "-draft"
     submitted_doc = {}
     db_dict = {"platform": platform, "component": component, "release": release}
-    draft_doc = mydb4[collection].find_one(db_dict)
+    draft_doc = mydb4[draft_collection].find_one(db_dict)
     if draft_doc:
         submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
             draft_doc.get("platform"), draft_doc.get("component"), draft_doc.get("release"), draft_doc.get("commands", " "), draft_doc.get("links", " "), userid
 
     replaced_doc = mydb4[collection].replace_one(db_dict, submitted_doc, True)
     if replaced_doc.acknowledged:
-        content = content = "Document ??? updated by " + userid + " in production collection"
+        content = "Document updated by " + userid + " in production collection"
     else:
         content = "Error with updating production document"
     

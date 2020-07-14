@@ -1,6 +1,6 @@
 $(document).ready(function(){
   $("#loading").hide()
-  console.log("new function - June 17")
+  console.log("new function - July 14")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
@@ -17,9 +17,12 @@ $(document).ready(function(){
       $("#container_release").addClass("container--draft")
       $("#container_component").addClass("container--draft")
     } else{
-      $("#container_platform").addClass("container--platform_release_prod")
-      $("#container_release").addClass("container--platform_release_prod")
-      $("#container_component").addClass("container--component_prod")
+      // $("#container_platform").addClass("container--platform_release_prod")
+      // $("#container_release").addClass("container--platform_release_prod")
+      // $("#container_component").addClass("container--component_prod")
+      $("#container_platform").addClass("container--draft")
+      $("#container_release").addClass("container--draft")
+      $("#container_component").addClass("container--draft")
     }
     let inputs = {"action":"get_collection_data", "collection":collection_name}
     let post_data = {name: task_name, input: inputs}

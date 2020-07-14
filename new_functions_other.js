@@ -1,4 +1,4 @@
-console.log("new function other - June 17")
+console.log("new function other - July 14")
 
 function create_new_platform(collection_name){
   console.log("Create new platform function called " + " " + collection_name);
@@ -84,7 +84,7 @@ function submit_changes_new(collection_name, platform_name, component_name, rele
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
-          console.log("BDB result ", result.data.variables._0)
+          console.log("BDB result returned  ", result.data.variables._0)
           $("#loading").hide()
           openModal(result.data.variables._0)
           clear_all()
@@ -107,7 +107,7 @@ function submit_changes_user(collection_name, platform_name, component_name, rel
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
-          console.log("BDB result ", result.data.variables._0)
+          console.log("BDB result returned  ", result.data.variables._0)
           $("#loading").hide()
           openModal(result.data.variables._0)
           clear_all()
@@ -136,7 +136,7 @@ function submit_changes_admin(collection_name, platform_name, component_name, re
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
         if(result.data.variables._0){
-          console.log("BDB result ", result.data.variables._0)
+          console.log("BDB result returned  ", result.data.variables._0)
           clear_all()
           clear_and_hide_containers()
           $("#platform > button").removeClass("btn--highlight")
@@ -169,7 +169,7 @@ function approve_doc(collection_name, platform_name, component_name, release_nam
   $.post({url: link, dataType: "json", data: post_data})
     .done(function(result){
       if(result.data.variables._0){
-        console.log("BDB result ", result.data.variables._0)
+        console.log("BDB result returned  ", result.data.variables._0)
         clear_all()
         clear_and_hide_containers()
         $("#platform > button").removeClass("btn--highlight")

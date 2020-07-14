@@ -1,4 +1,4 @@
-console.log("new function getters - June 17")
+console.log("new function getters - July 14")
 
 function get_collection_list(){
   //using static list of collection
@@ -79,6 +79,7 @@ function get_release_list(collection_name, platform_name, component_name){
       $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + item + "</button>")
     }
   })
+  document.getElementById("release").scrollIntoView();
 }
 
 function get_content(collection_name, platform_name, release_name, component_name){
@@ -126,6 +127,7 @@ function get_content(collection_name, platform_name, release_name, component_nam
       })
     }
   }
+  document.getElementById("current_output_section").scrollIntoView();
 }
 
 function get_final_view(collection_name, platform_name, component_name,release_name){
