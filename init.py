@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function
 import bdblib
-from pymongo import MongoClient
+import pymongo
 
 def task(env, action, collection="None", platform="None", release="None", component="None", commands="None", links="None"):
     """
@@ -8,19 +8,18 @@ def task(env, action, collection="None", platform="None", release="None", compon
     """
     result = bdblib.TaskResult()
     
-    clientv4 = MongoClient(
-        'mongodb://lighthouse_v41_backend:a958935c0a9a9d21709711cacf2374dfea743d5e@bdb-dbaas-alln-1:27000/?authSource'
-        '=task_lighthouse_v41_backend&authMechanism=MONGODB-CR')
-    mydb4 = clientv4["task_lighthouse_v41_backend"]
-
     userid = env.user_name
     collection = collection.lower()
     platform = platform.lower()
     component = component.lower()
     release = release.lower()
+    mydb4  = get_dbaas(env)
 
     backend_action = action.lower()
-    if backend_action == "get_collection_list":
+    if backend_action  == "get_admin_status":
+        admin_status = get_admin_status(mydb4, userid)
+        result.append(admin_status)
+    elif backend_action == "get_collection_list":
         collection_list = get_collection_list(mydb4)
         result.append(collection_list)
     elif backend_action == "get_collection_data":
@@ -48,6 +47,26 @@ def task(env, action, collection="None", platform="None", release="None", compon
         result.append("Action is invalid")
 
     return result
+
+def get_dbaas(env):
+    # connect to MongoDB, and return pymongo object
+    dbaas_mongo_url = "mongodb://" + ",".join([ srv['host'] + ":" + str(srv['port']) for srv in env.task_db['mongoServers'] ]) + "/?replicaSet={}".format(env.task_db['replica'])
+    dbaas = pymongo.MongoClient(dbaas_mongo_url)[env.task_db['database']]
+    dbaas.authenticate(env.task_db['username'], env.task_db['password'])
+    return dbaas
+
+def get_admin_status(mydb4, userid):
+    # get the admin status using list of admin in MongoDB
+    db_dict = {"_id": "admins"}
+    doc = mydb4["admin_list"].find_one(db_dict)
+    admin_list = doc.get("admin")
+    if userid in admin_list:
+        admin_status = True
+    else:
+        admin_status = False
+    
+    print(admin_status)
+    return admin_status
 
 def get_collection_list(mydb4):
     """

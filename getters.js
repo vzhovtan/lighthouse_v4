@@ -1,7 +1,15 @@
 console.log("new function getters - July 14")
 
-function get_collection_list(){
-  //using static list of collection
+function get_collection_list(post_data){
+  //retrieve userid from BDB backend and use static list of collection
+  $("#loading").show()
+  console.log("get_userid called --> getting userid")
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+    if(result.data.variables._0){
+      $("#loading").hide()
+      console.log(result.data.variables._0)
+  });
   console.log("static list is being used for collection list")
   admin_collection_list.forEach((item) => {
     $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
