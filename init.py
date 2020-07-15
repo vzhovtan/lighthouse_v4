@@ -20,7 +20,7 @@ def task(env, action, collection="None", platform="None", release="None", compon
         admin_status = get_admin_status(mydb4, userid)
         result.append(admin_status)
     elif backend_action == "get_collection_list":
-        collection_list = get_collection_list(mydb4)
+        collection_list = get_collection_list(mydb4,userid)
         result.append(collection_list)
     elif backend_action == "get_collection_data":
         collection_data = get_collection_data(collection, mydb4)
@@ -65,21 +65,26 @@ def get_admin_status(mydb4, userid):
     else:
         admin_status = False
     
-    print(admin_status)
     return admin_status
 
-def get_collection_list(mydb4):
+def get_collection_list(mydb4, userid):
     """
     get collection list from MongoDB
     """
-    restricted_item = ["admin", "webexbot", "event", "commander"]
+    admin_status = get_admin_status(mydb4, userid)
+    restricted_item_admin = ["admin", "webexbot", "event", "commander"]
+    restricted_item_user = ["admin", "webexbot", "event", "commander", "draft"]
     collection_list = []
     result_list = []
 
     for collection_name in mydb4.collection_names():
         collection_list.append(collection_name.lower())
-
-    result_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item)]
+    
+    if admin_status:
+        result_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_admin)]
+    else:
+        result_list = [collection for collection in collection_list if all(item not in collection for item in restricted_item_user)]   
+    
     result_list.sort()
     return result_list
 
