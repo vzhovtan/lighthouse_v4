@@ -1,13 +1,23 @@
-console.log("new function getters - July 14")
-
-function get_collection_list(){
-  //using static list of collection
-  console.log("static list is being used for collection list")
-  admin_collection_list.forEach((item) => {
-    $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
-  })
-}
+console.log("new function getters - July 20")
    
+function get_collection_list(){
+  //using list of collection from MongoDB
+  $("#loading").show()
+  console.log("mongodb list is being used for collection list")
+  let inputs = {"action":"get_collection_list"}
+  let post_data = {name: task_name, input: inputs}
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+    if(result.data.variables._0){
+      $("#loading").hide()
+      let collection_list = result.data.variables._0
+      collection_list.forEach((item) => {
+        $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
+      })
+    }  
+  });
+}
+
 function get_platform_list(collection_name, post_data){
   $("#loading").show()
   console.log("get_platform_list called --> getting the entire collection data and displaying the platform list only")
