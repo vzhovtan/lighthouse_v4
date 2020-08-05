@@ -15,12 +15,12 @@ function create_new_platform(collection_name){
   $("#new_button_section").show();
   $("#new_form").show();
 }
-  
+
 function create_new_component(collection_name, platform_name) {
   console.log("Create new component function called " + " " + collection_name + " " + platform_name);
   clear_and_hide_containers();
   clear_and_hide_new_platform_component_section();
-  $("#new_platform").val(platform_name);
+  $("#new_platform_input").val(platform_name);
   if (collection_name.includes("ios-xr")){
     $("#new_release_input").val("Release Independent");
   } else{
@@ -50,18 +50,18 @@ function modify_doc(collection_name, platform_name, component_name, release_name
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       command_list.push(item.commands)
       link_list.push(item.links)
-    }  
+    }
   })
   console.log("Commands", command_list)
   console.log("Links", link_list)
 
   if (command_list[0]){
-    command_list[0].forEach((item) => {    
+    command_list[0].forEach((item) => {
       $("#modify_commands").val($("#modify_commands").val() + item + "\n");
     })
   }
   if (link_list[0]){
-    link_list[0].forEach((item) => {    
+    link_list[0].forEach((item) => {
       $("#modify_links").val($("#modify_links").val() + item +"\n");
     })
   }
@@ -292,7 +292,7 @@ function clear_and_hide_containers(){
   $("#container_release").removeClass()
   $("#container_component").removeClass()
 }
-  
+
 
 function clear_and_hide_current_output(){
   $("#current_output").empty()

@@ -17,9 +17,6 @@ $(document).ready(function(){
       $("#container_release").addClass("container--draft")
       $("#container_component").addClass("container--draft")
     } else{
-      // $("#container_platform").addClass("container--platform_release_prod")
-      // $("#container_release").addClass("container--platform_release_prod")
-      // $("#container_component").addClass("container--component_prod")
       $("#container_platform").addClass("container--draft")
       $("#container_release").addClass("container--draft")
       $("#container_component").addClass("container--draft")

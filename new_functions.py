@@ -7,9 +7,9 @@ def task(env, action, collection="None", platform="None", release="None", compon
     Test BORG module for LHv4.1, trying to improve perfomance by loading entire collection in advance
     """
     result = bdblib.TaskResult()
-    
+
     clientv4 = MongoClient(
-        'mongodb://lighthouse_v41_backend:a958935c0a9a9d21709711cacf2374dfea743d5e@bdb-dbaas-alln-1:27000/?authSource'
+        'mongodb://lighthouse_v41_backend:a958935c0a9a9d21709711cacf2374dfea743d5e@bdb-user-alln-2.cisco.com:27000/?authSource'
         '=task_lighthouse_v41_backend&authMechanism=MONGODB-CR')
     mydb4 = clientv4["task_lighthouse_v41_backend"]
 
@@ -25,7 +25,7 @@ def task(env, action, collection="None", platform="None", release="None", compon
         result.append(collection_list)
     elif backend_action == "get_collection_data":
         collection_data = get_collection_data(collection, mydb4)
-        result.append(collection_data) 
+        result.append(collection_data)
     elif backend_action == "get_content_raw":
         content_data = get_content_raw (collection, platform, component, release, mydb4)
         result.append(content_data)
@@ -37,13 +37,16 @@ def task(env, action, collection="None", platform="None", release="None", compon
         result.append(change_result)
     elif backend_action == "submit_changes_admin":
         change_result = submit_changes_admin (collection, platform, component, release, commands, links, userid, mydb4)
-        result.append(change_result)    
+        result.append(change_result)
     elif backend_action == "delete_document":
         del_result = delete_doc (collection, platform, component, release, userid, mydb4)
-        result.append(del_result) 
+        result.append(del_result)
     elif backend_action == "approve_document":
         aprv_result = approve_doc (collection, platform, component, release, userid, mydb4)
-        result.append(aprv_result)                               
+        result.append(aprv_result)
+    elif backend_action == "update_stats":
+        stats_result = update_stats (collection, platform, component, release, userid, mydb4)
+        result.append(stats_result)
     else:
         result.append("Action is invalid")
 
@@ -153,17 +156,17 @@ def submit_changes_user (collection, platform, component, release, commands, lin
     content = ""
     submitted_doc = {}
     db_dict = {"platform": platform, "component": component, "release": release}
-    
+
     submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
     platform, component, release, commands, links, userid
-    
+
     doc_exist_flag = mydb4[collection].find_one(db_dict)
     if not doc_exist_flag:
         new_doc = mydb4[collection].insert_one(submitted_doc)
         if new_doc.acknowledged:
             content = "New document submitted with id " + str(new_doc.inserted_id) + " by " + userid + " for review and approval"
         else:
-            content = "Error with submitting new document"    
+            content = "Error with submitting new document"
     else:
         content = "Similar document for the same platform/component/release is under review already"
 
@@ -177,7 +180,7 @@ def submit_changes_admin (collection, platform, component, release, commands, li
     content = ""
     submitted_doc = {}
     db_dict = {"platform": platform, "component": component, "release": release}
-    
+
     submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
     platform, component, release, commands, links, userid
 
@@ -186,16 +189,16 @@ def submit_changes_admin (collection, platform, component, release, commands, li
         content = "Document updated by " + userid + " in production collection"
     else:
         content = "Error with updating production document"
-    
+
     content += "\n"
-    
+
     draft_collection = collection + "-draft"
     removed_doc = mydb4[draft_collection].delete_one(db_dict)
     if removed_doc.acknowledged:
         content += "Draft version of the document has been deleted"
     else:
-        content += "Error with deletion of the draft document"    
-    
+        content += "Error with deletion of the draft document"
+
     return content
 
 def delete_doc (collection, platform, component, release, userid, mydb4):
@@ -230,13 +233,30 @@ def approve_doc (collection, platform, component, release, userid, mydb4):
         content = "Document updated by " + userid + " in production collection"
     else:
         content = "Error with updating production document"
-    
+
     content += "\n"
-    
+
     removed_doc = mydb4[draft_collection].delete_one(db_dict)
     if removed_doc.acknowledged:
         content += "Draft version of the document has been deleted"
     else:
-        content += "Error with deletion of the draft document"   
+        content += "Error with deletion of the draft document"
 
     return content
+
+def update_stats (collection, platform, component, release, userid, mydb4):
+        """
+        Update stats in MongoDB
+        """
+        content = ""
+        submitted_doc = {}
+        submitted_doc["collection"], submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["user"] = \
+                collection, platform, component, release, userid
+
+        inserted_doc = mydb4["usage-event"].insert_one(submitted_doc)
+        if inserted_doc.acknowledged:
+            content = "stats updated"
+        else:
+            content = ""
+
+        return content
