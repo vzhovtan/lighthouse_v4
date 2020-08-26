@@ -1,4 +1,4 @@
-console.log("new function getters - July 14")
+console.log("new function getters - AUG.26")
 
 function get_collection_list(){
   //using static list of collection

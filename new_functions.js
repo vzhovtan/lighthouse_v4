@@ -1,9 +1,24 @@
 $(document).ready(function(){
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString)
+  const query_collection_exist = urlParams.has('collection')
+  const query_collection_value = urlParams.get('collection')
+
   $("#loading").hide()
-  console.log("new function - July 14")
+  console.log("new function - AUG.26")
   clear_all()
   clear_and_hide_containers()
   get_collection_list()
+  if (query_collection_exist){
+    $("#about").hide()
+    $("#collections > li").removeClass("highlight")
+    $("#container_platform").addClass("container--draft")
+    $("#container_release").addClass("container--draft")
+    $("#container_component").addClass("container--draft")
+    let inputs = {"action":"get_collection_data", "collection":query_collection_value}
+    let post_data = {name: task_name, input: inputs}
+    get_platform_list(query_collection_value, post_data) 
+  }
 
   $('#collections').on( 'click', 'li', function() {
     clear_all()
@@ -12,15 +27,9 @@ $(document).ready(function(){
     $("#collections > li").removeClass("highlight")
     $(this).addClass("highlight")
     let collection_name = $(this).text().toLowerCase()
-    if (collection_name.includes('draft')){
-      $("#container_platform").addClass("container--draft")
-      $("#container_release").addClass("container--draft")
-      $("#container_component").addClass("container--draft")
-    } else{
-      $("#container_platform").addClass("container--draft")
-      $("#container_release").addClass("container--draft")
-      $("#container_component").addClass("container--draft")
-    }
+    $("#container_platform").addClass("container--draft")
+    $("#container_release").addClass("container--draft")
+    $("#container_component").addClass("container--draft")
     let inputs = {"action":"get_collection_data", "collection":collection_name}
     let post_data = {name: task_name, input: inputs}
     get_platform_list(collection_name, post_data)
@@ -134,7 +143,7 @@ $(document).ready(function(){
   });
 
   $('#reload').click(() => {
-    location.reload();
+    window.location = window.location.href.split("?")[0]
   });
 });
 
