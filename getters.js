@@ -1,6 +1,6 @@
-console.log("new function getters - July 20")
+console.log("new function getters - SEP.02")
    
-function get_collection_list(){
+function get_collection_list(collection_name = "default"){
   //using list of collection from MongoDB
   $("#loading").show()
   console.log("mongodb list is being used for collection list")
@@ -12,8 +12,12 @@ function get_collection_list(){
       $("#loading").hide()
       let collection_list = result.data.variables._0
       collection_list.forEach((item) => {
-        $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
-      })
+        if ( item === collection_name) {
+          $("#collections").append("<li class='sidebar__item highlight' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
+        } else {
+          $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
+        }
+        })
     }  
   });
 }
@@ -124,6 +128,7 @@ function get_content(collection_name, platform_name, release_name, component_nam
     admin_buttons.forEach((item) => {
       $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "draftcollection" + "'>" + item + "</button>")
     })
+  document.getElementById("current_output_section").scrollIntoView();  
   } else {
     if (release_name.toLowerCase().includes('independent')){
       $("#button_section").show()
@@ -136,8 +141,9 @@ function get_content(collection_name, platform_name, release_name, component_nam
         $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "regularrelease" + "'>" + item + "</button>")
       })
     }
+  document.getElementById("current_output_section").scrollIntoView();  
+  get_final_view(collection_name, platform_name, component_name,release_name)
   }
-  document.getElementById("current_output_section").scrollIntoView();
 }
 
 function get_final_view(collection_name, platform_name, component_name,release_name){

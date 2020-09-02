@@ -4,20 +4,20 @@ $(document).ready(function(){
   const query_collection_exist = urlParams.has('collection')
   const query_collection_value = urlParams.get('collection')
 
-  $("#loading").hide()
-  console.log("new function - AUG.26")
+  console.log("new function - SEP.02")
   clear_all()
   clear_and_hide_containers()
-  get_collection_list()
   if (query_collection_exist){
     $("#about").hide()
-    $("#collections > li").removeClass("highlight")
     $("#container_platform").addClass("container--draft")
     $("#container_release").addClass("container--draft")
     $("#container_component").addClass("container--draft")
+    get_collection_list(query_collection_value)
     let inputs = {"action":"get_collection_data", "collection":query_collection_value}
     let post_data = {name: task_name, input: inputs}
     get_platform_list(query_collection_value, post_data) 
+  } else {
+    get_collection_list()
   }
 
   $('#collections').on( 'click', 'li', function() {
