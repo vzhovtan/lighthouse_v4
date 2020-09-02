@@ -1,10 +1,15 @@
-console.log("new function getters - AUG.26")
-
-function get_collection_list(){
+console.log("new function getters - SEP.02")
+  
+function get_collection_list(collection_name = "default"){
   //using static list of collection
-  console.log("static list is being used for collection list")
+  $("#loading").hide()
+  console.log("STATIC LIST is being used for collection list")
   admin_collection_list.forEach((item) => {
-    $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
+    if ( item === collection_name) {
+      $("#collections").append("<li class='sidebar__item highlight' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
+    } else {
+      $("#collections").append("<li class='sidebar__item' id='" + item + "'><a>" + item.toUpperCase() + "</a></li>")
+    }
   })
 }
 
@@ -23,13 +28,13 @@ function get_platform_list(collection_name, post_data){
         }
       })
       platform_list.sort()
-      console.log("Platform list", platform_list)
+      console.log("Platform list", platform_list) 
       if (!collection_name.includes('draft')){
         $("#platform").append("<button class='btn btn--new' id='" + collection_name + "'>" + "Create new platform" + "</button>")
       }
       platform_list.forEach((item) => {
         $("#platform").append("<button class='btn btn--platform' id='" + collection_name + "'>" + item + "</button>")
-      })
+      }) 
     }
     $("#container_platform").show()
   });
@@ -43,7 +48,7 @@ function get_component_list(collection_name, platform_name){
       if(!component_list.includes(item.component)){
         component_list.push(item.component)
       }
-    }
+    }  
   })
   component_list.sort()
   console.log("Component list", component_list)
@@ -54,7 +59,7 @@ function get_component_list(collection_name, platform_name){
     $("#component").append("<button class='btn btn--component' id='" + collection_name + "_" + platform_name + "'>" + item + "</button>")
   })
 }
-
+  
 function get_release_list(collection_name, platform_name, component_name){
   console.log("get_release_list called --> using collection_data variables saved before")
   let release_list = []
@@ -65,7 +70,7 @@ function get_release_list(collection_name, platform_name, component_name){
         release_list.push(item.release)
         }
       }
-    }
+    }  
   })
   release_list.sort()
   console.log("Release list", release_list)
@@ -91,20 +96,20 @@ function get_content(collection_name, platform_name, release_name, component_nam
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       command_list = item.commands
       link_list = item.links
-    }
+    }  
   })
   $("#current_output").empty()
   $("#current_output_section").show()
   let output= "<br><h6>" + platform_name + " - " + component_name + " - " + release_name + "</h6><br>"
   if (command_list){
     output += "<br><h6>Command list</h6><br>"
-    command_list.forEach((item) => {
+    command_list.forEach((item) => {    
       output += item + "<br>"
     })
   }
   if (link_list){
     output += "<br><h6>Link list</h6><br>"
-    link_list.forEach((item) => {
+    link_list.forEach((item) => {    
       output += item + "<br>"
     })
   }
@@ -114,6 +119,7 @@ function get_content(collection_name, platform_name, release_name, component_nam
     admin_buttons.forEach((item) => {
       $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "draftcollection" + "'>" + item + "</button>")
     })
+  document.getElementById("current_output_section").scrollIntoView();  
   } else {
     if (release_name.toLowerCase().includes('independent')){
       $("#button_section").show()
@@ -126,18 +132,9 @@ function get_content(collection_name, platform_name, release_name, component_nam
         $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "regularrelease" + "'>" + item + "</button>")
       })
     }
+  document.getElementById("current_output_section").scrollIntoView();  
+  get_final_view(collection_name, platform_name, component_name,release_name)
   }
-  let inputs = {"action":"update_stats", "collection":collection_name, "platform":platform_name, "release":release_name, "component":component_name}
-  let post_data = {name: task_name, input: inputs}
-  $.post({url: link, dataType: "json", data: post_data})
-    .done(function(result){
-    if (result.data.variables._0.includes("Error")){
-      console.log("There are some error with updaing stats");
-    } else {
-      console.log("Stats updated")
-    }
-  });
-  document.getElementById("current_output_section").scrollIntoView();
 }
 
 function get_final_view(collection_name, platform_name, component_name,release_name){
@@ -155,7 +152,7 @@ function get_final_view(collection_name, platform_name, component_name,release_n
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       command_list = item.commands
       link_list = item.links
-    }
+    }  
   })
   if (command_list){
     content += cmd_header
@@ -197,7 +194,7 @@ function get_final_view(collection_name, platform_name, component_name,release_n
   $("#admin_button > button").removeClass("btn--highlight");
   user_view_modal = PaneOpen(content);
   user_view_modal.show();
-}
+}  
 
 
 function get_diff(collection_name, platform_name, component_name,release_name){
@@ -211,17 +208,17 @@ function get_diff(collection_name, platform_name, component_name,release_name){
   collection_data.forEach((item) => {
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       new_command_list = item.commands
-    }
+    }  
   })
   collection_data.forEach((item) => {
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       new_link_list = item.links
-    }
+    }  
   })
-
+  
   console.log("New command list " + new_command_list)
   console.log("New link list " + new_link_list)
-
+  
   if (new_command_list){
     new_command_list.forEach((item) => {
       $("#new_commands").text($("#new_commands").text() + item +"\n");
@@ -251,12 +248,12 @@ function get_diff(collection_name, platform_name, component_name,release_name){
         collection_data_diff.forEach((item) => {
         if(item.platform == platform_name && item.component == component_name && item.release == release_name){
           current_command_list = item.commands
-          }
+          }  
         })
         collection_data_diff.forEach((item) => {
         if(item.platform == platform_name && item.component == component_name && item.release == release_name){
           current_link_list = item.links
-          }
+          }  
         })
 
         console.log("Current command list "+ current_command_list)
@@ -275,7 +272,7 @@ function get_diff(collection_name, platform_name, component_name,release_name){
         new_current_cmd = array_diff(new_command_list, current_command_list)
         current_new_lnk = array_diff(current_link_list, new_link_list)
         new_current_lnk = array_diff(new_link_list, current_link_list)
-
+        
         if (current_new_cmd){
           $("#diff_commands").text($("#diff_commands").text() + "+++ Current command --- New command" + "\n");
           current_new_cmd.forEach((item) => {
@@ -308,7 +305,7 @@ function get_diff(collection_name, platform_name, component_name,release_name){
         submit_buttons.forEach((item) => {
           $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdiff" + "'>" + item + "</button>")
         });
-      }
+      }  
     });
   } else {
     let current_new_cmd = []
@@ -320,12 +317,12 @@ function get_diff(collection_name, platform_name, component_name,release_name){
     collection_data_diff.forEach((item) => {
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       current_command_list = item.commands
-      }
+      }  
     })
     collection_data_diff.forEach((item) => {
     if(item.platform == platform_name && item.component == component_name && item.release == release_name){
       current_link_list = item.links
-      }
+      }  
     })
 
     console.log("Current command list "+ current_command_list)
@@ -344,7 +341,7 @@ function get_diff(collection_name, platform_name, component_name,release_name){
     new_current_cmd = array_diff(new_command_list, current_command_list)
     current_new_lnk = array_diff(current_link_list, new_link_list)
     new_current_lnk = array_diff(new_link_list, current_link_list)
-
+    
     if (current_new_cmd){
       $("#diff_commands").text($("#diff_commands").text() + "+++ Current command --- New command" + "\n");
       current_new_cmd.forEach((item) => {

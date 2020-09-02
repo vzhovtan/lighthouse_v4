@@ -4,10 +4,10 @@ import pymongo
 
 def task(env, action, collection="None", platform="None", release="None", component="None", commands="None", links="None"):
     """
-    Test BORG module for LHv4.1, trying to improve perfomance by loading entire collection in advance
+    Update this docsrting later - TBD
     """
     result = bdblib.TaskResult()
-    
+
     userid = env.user_name
     collection = collection.lower()
     platform = platform.lower()
@@ -42,7 +42,10 @@ def task(env, action, collection="None", platform="None", release="None", compon
         result.append(del_result) 
     elif backend_action == "approve_document":
         aprv_result = approve_doc (collection, platform, component, release, userid, mydb4)
-        result.append(aprv_result)                               
+        result.append(aprv_result)
+    elif backend_action == "update_stats":
+        stats_result = update_stats (collection, platform, component, release, userid, mydb4)
+        result.append(stats_result)    
     else:
         result.append("Action is invalid")
 
@@ -262,5 +265,22 @@ def approve_doc (collection, platform, component, release, userid, mydb4):
         content += "Draft version of the document has been deleted"
     else:
         content += "Error with deletion of the draft document"   
+
+    return content
+
+def update_stats (collection, platform, component, release, userid, mydb4):
+    """
+    Update stats in MongoDB
+    """
+    content = ""
+    submitted_doc = {}
+    submitted_doc["collection_name"], submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["userid"] = \
+    collection, platform, component, release, userid
+
+    inserted_doc = mydb4["usage-event"].insert_one(submitted_doc)
+    if inserted_doc.acknowledged:
+        content = "stats updated"
+    else:
+        content = "" 
 
     return content
