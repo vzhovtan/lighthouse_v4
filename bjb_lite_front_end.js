@@ -19,6 +19,9 @@ export const bjbModuleFunction = async (myDiv, loadedDeps, LOG) => {
     else if ((technology.includes('Application Centric Infrastructure'))){
       myDiv.html('<a href="https://scripts.cisco.com/app/lighthouse_v41_backend/index.html?collection=data-center" target="_blank">Lighthouse portal</a>');
     }
+    else if ((technology.includes('Mobile Wireless'))){
+      myDiv.html('<a href="https://scripts.cisco.com/app/lighthouse_v41_backend/index.html?collection=mobility" target="_blank">Lighthouse portal</a>');
+    }
     else{
       myDiv.html('<a href="https://scripts.cisco.com/app/lighthouse_v41_backend/index.html" target="_blank">Lighthouse portal</a>');
     }
