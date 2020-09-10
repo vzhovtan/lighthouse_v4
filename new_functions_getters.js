@@ -1,4 +1,4 @@
-console.log("new function getters - SEP.02")
+console.log("new function getters - SEP.10")
   
 function get_collection_list(collection_name = "default"){
   //using static list of collection
@@ -134,6 +134,7 @@ function get_content(collection_name, platform_name, release_name, component_nam
     }
   document.getElementById("current_output_section").scrollIntoView();  
   get_final_view(collection_name, platform_name, component_name,release_name)
+  update_stats (collection_name, platform_name, component_name, release_name)
   }
 }
 

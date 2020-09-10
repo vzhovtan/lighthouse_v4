@@ -1,4 +1,4 @@
-console.log("new function other - July 14")
+console.log("new function other - SEP.10")
 
 function create_new_platform(collection_name){
   console.log("Create new platform function called " + " " + collection_name);
@@ -276,6 +276,18 @@ function preview (collection_name, platform_name, component_name, release_name, 
   user_view_modal.show()
 }
 
+function update_stats(collection_name, platform_name, component_name, release_name){
+  console.log("Update stats function called " + " " + collection_name + " " + platform_name + " " + component_name + " " + release_name + " ")
+  let inputs = {"action":"update_stats", "collection":collection_name, "platform":platform_name, "component":component_name, "release":release_name}
+  let post_data = {name: task_name, input: inputs}
+  console.log("BDB input data ", post_data)
+  $.post({url: link, dataType: "json", data: post_data})
+    .done(function(result){
+      if(result.data.variables._0){
+        console.log("BDB result returned  ", result.data.variables._0)
+      }
+  });
+}
 
 //init and clear functions below
 function clear_and_hide_containers(){
