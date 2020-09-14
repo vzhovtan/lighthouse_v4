@@ -1,8 +1,9 @@
 from __future__ import unicode_literals, absolute_import, print_function
 import bdblib
+from datetime import datetime
 from pymongo import MongoClient
 
-def task(env, action, collection="None", platform="None", release="None", component="None", commands="None", links="None"):
+def task(env, action, collection="None", platform="None", release="None", feature="None", commands="None", links="None"):
     """
     Test BORG module for LHv4.1, trying to improve perfomance by loading entire collection in advance
     """
@@ -16,7 +17,7 @@ def task(env, action, collection="None", platform="None", release="None", compon
     userid = env.user_name
     collection = collection.lower()
     platform = platform.lower()
-    component = component.lower()
+    feature = feature.lower()
     release = release.lower()
 
     backend_action = action.lower()
@@ -27,25 +28,25 @@ def task(env, action, collection="None", platform="None", release="None", compon
         collection_data = get_collection_data(collection, mydb4)
         result.append(collection_data)
     elif backend_action == "get_content_raw":
-        content_data = get_content_raw (collection, platform, component, release, mydb4)
+        content_data = get_content_raw (collection, platform, feature, release, mydb4)
         result.append(content_data)
     elif backend_action == "get_content_final":
-        content_data = get_content_final (collection, platform, component, release, mydb4)
+        content_data = get_content_final (collection, platform, feature, release, mydb4)
         result.append(content_data)
     elif backend_action == "submit_changes_user":
-        change_result = submit_changes_user (collection, platform, component, release, commands, links, userid, mydb4)
+        change_result = submit_changes_user (collection, platform, feature, release, commands, links, userid, mydb4)
         result.append(change_result)
     elif backend_action == "submit_changes_admin":
-        change_result = submit_changes_admin (collection, platform, component, release, commands, links, userid, mydb4)
+        change_result = submit_changes_admin (collection, platform, feature, release, commands, links, userid, mydb4)
         result.append(change_result)
     elif backend_action == "delete_document":
-        del_result = delete_doc (collection, platform, component, release, userid, mydb4)
+        del_result = delete_doc (collection, platform, feature, release, userid, mydb4)
         result.append(del_result)
     elif backend_action == "approve_document":
-        aprv_result = approve_doc (collection, platform, component, release, userid, mydb4)
+        aprv_result = approve_doc (collection, platform, feature, release, userid, mydb4)
         result.append(aprv_result)
     elif backend_action == "update_stats":
-        stats_result = update_stats (collection, platform, component, release, userid, mydb4)
+        stats_result = update_stats (collection, platform, feature, release, userid, mydb4)
         result.append(stats_result)
     else:
         result.append("Action is invalid")
@@ -56,7 +57,7 @@ def get_collection_list(mydb4):
     """
     get collection list from MongoDB
     """
-    restricted_item = ["admin", "webexbot", "event", "commander"]
+    restricted_item = ["admin", "webexbot", "event", "commander", "test", "new"]
     collection_list = []
     result_list = []
 
@@ -76,7 +77,7 @@ def get_collection_data(collection, mydb4):
     for doc in mydb4[collection].find():
         item_dict = {}
         item_dict["platform"] = doc.get("platform")
-        item_dict["component"] = doc.get("component")
+        item_dict["feature"] = doc.get("feature")
         item_dict["release"] = doc.get("release")
         item_dict["commands"] = doc.get("commands")
         item_dict["links"] = doc.get("links")
@@ -84,13 +85,13 @@ def get_collection_data(collection, mydb4):
 
     return collection_data
 
-def get_content_raw (collection, platform, component, release, mydb4):
+def get_content_raw (collection, platform, feature, release, mydb4):
     """
-    get commands and links from MongoDB for specific collection/platform/release/component
+    get commands and links from MongoDB for specific collection/platform/release/feature
     without formatting, can be used for specific request only
     """
     content_db = []
-    db_dict = {"platform": platform, "release": release, "component": component}
+    db_dict = {"platform": platform, "release": release, "feature": feature}
     doc = mydb4[collection].find_one(db_dict)
     if doc:
         content_db.append(doc.get("commands", ""))
@@ -98,9 +99,9 @@ def get_content_raw (collection, platform, component, release, mydb4):
 
     return content_db
 
-def get_content_final (collection, platform, component, release, mydb4):
+def get_content_final (collection, platform, feature, release, mydb4):
     """
-    1 - get commands and links from MongoDB for specific collection/platform/release/component
+    1 - get commands and links from MongoDB for specific collection/platform/release/feature
     2 - format the output as html for CSOne/Lightning front-end
     3 - Admin Portal has to use formatting in JS
     """
@@ -108,13 +109,13 @@ def get_content_final (collection, platform, component, release, mydb4):
     cmd = []
     lnks = []
 
-    db_dict = {"platform": platform, "release": release, "component": component}
+    db_dict = {"platform": platform, "release": release, "feature": feature}
     doc = mydb4[collection].find_one(db_dict)
     cmd = doc.get("commands")
     lnks = doc.get("links")
 
     content_final += "</div><br></div><div align='left'><img src='https://i.imgur.com/f0vBigO.jpg' alt=''></div>"
-    content_final += "<div style='text-align:center'><h6>" + platform.upper() + " - " + release + " - " + component.upper() + "</h6></div>"
+    content_final += "<div style='text-align:center'><h6>" + platform.upper() + " - " + release + " - " + feature.upper() + "</h6></div>"
 
     if cmd:
         content_final += "<div><br><h6>" + "Useful Commands For Troubleshooting: (some commands syntax could vary according to platform or version)" + "</h6><br><br><div style='width:98%'"
@@ -148,17 +149,17 @@ def get_content_final (collection, platform, component, release, mydb4):
 
     return content_final
 
-def submit_changes_user (collection, platform, component, release, commands, links, userid, mydb4):
+def submit_changes_user (collection, platform, feature, release, commands, links, userid, mydb4):
     """
-    Update MongoDB draft collection with command and list for specific collection/platform/release/component
+    Update MongoDB draft collection with command and list for specific collection/platform/release/feature
     submitted by regular user
     """
     content = ""
     submitted_doc = {}
-    db_dict = {"platform": platform, "component": component, "release": release}
+    db_dict = {"platform": platform, "feature": feature, "release": release}
 
-    submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
-    platform, component, release, commands, links, userid
+    submitted_doc["platform"], submitted_doc["feature"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
+    platform, feature, release, commands, links, userid
 
     doc_exist_flag = mydb4[collection].find_one(db_dict)
     if not doc_exist_flag:
@@ -168,21 +169,21 @@ def submit_changes_user (collection, platform, component, release, commands, lin
         else:
             content = "Error with submitting new document"
     else:
-        content = "Similar document for the same platform/component/release is under review already"
+        content = "Similar document for the same platform/feature/release is under review already"
 
     return content
 
-def submit_changes_admin (collection, platform, component, release, commands, links, userid, mydb4):
+def submit_changes_admin (collection, platform, feature, release, commands, links, userid, mydb4):
     """
-    Update MongoDB production collection with command and list for specific collection/platform/release/component
-    submitted by admin and deletion of draft documetn for the same platform/release/component
+    Update MongoDB production collection with command and list for specific collection/platform/release/feature
+    submitted by admin and deletion of draft documetn for the same platform/release/feature
     """
     content = ""
     submitted_doc = {}
-    db_dict = {"platform": platform, "component": component, "release": release}
+    db_dict = {"platform": platform, "feature": feature, "release": release}
 
-    submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
-    platform, component, release, commands, links, userid
+    submitted_doc["platform"], submitted_doc["feature"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
+    platform, feature, release, commands, links, userid
 
     replaced_doc = mydb4[collection].replace_one(db_dict, submitted_doc, True)
     if replaced_doc.acknowledged:
@@ -201,12 +202,12 @@ def submit_changes_admin (collection, platform, component, release, commands, li
 
     return content
 
-def delete_doc (collection, platform, component, release, userid, mydb4):
+def delete_doc (collection, platform, feature, release, userid, mydb4):
     """
-    Delete MongoDB document for specific collection/platform/release/component
+    Delete MongoDB document for specific collection/platform/release/feature
     """
     content = ""
-    db_dict = {"platform": platform, "component": component, "release": release}
+    db_dict = {"platform": platform, "feature": feature, "release": release}
     removed_doc = mydb4[collection].delete_one(db_dict)
     if removed_doc.acknowledged:
         content = "Document removed by " + userid
@@ -215,18 +216,18 @@ def delete_doc (collection, platform, component, release, userid, mydb4):
 
     return content
 
-def approve_doc (collection, platform, component, release, userid, mydb4):
+def approve_doc (collection, platform, feature, release, userid, mydb4):
     """
     Approve the entire document form draft colleciton without editing
     """
     content = ""
     draft_collection = collection + "-draft"
     submitted_doc = {}
-    db_dict = {"platform": platform, "component": component, "release": release}
+    db_dict = {"platform": platform, "feature": feature, "release": release}
     draft_doc = mydb4[draft_collection].find_one(db_dict)
     if draft_doc:
-        submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
-            draft_doc.get("platform"), draft_doc.get("component"), draft_doc.get("release"), draft_doc.get("commands", " "), draft_doc.get("links", " "), userid
+        submitted_doc["platform"], submitted_doc["feature"], submitted_doc["release"], submitted_doc["commands"], submitted_doc["links"], submitted_doc["submitter"] = \
+            draft_doc.get("platform"), draft_doc.get("feature"), draft_doc.get("release"), draft_doc.get("commands", " "), draft_doc.get("links", " "), userid
 
     replaced_doc = mydb4[collection].replace_one(db_dict, submitted_doc, True)
     if replaced_doc.acknowledged:
@@ -244,19 +245,20 @@ def approve_doc (collection, platform, component, release, userid, mydb4):
 
     return content
 
-def update_stats (collection, platform, component, release, userid, mydb4):
-        """
-        Update stats in MongoDB
-        """
+def update_stats (collection, platform, feature, release, userid, mydb4):
+    """
+    Update stats in MongoDB
+    """
+    content = ""
+    dateTimeStr = str(datetime.now())
+    submitted_doc = {}
+    submitted_doc["collection"], submitted_doc["platform"], submitted_doc["feature"], submitted_doc["release"], submitted_doc["userid"], submitted_doc["request_time"] = \
+            collection, platform, feature, release, userid, dateTimeStr
+
+    inserted_doc = mydb4["usage-event"].insert_one(submitted_doc)
+    if inserted_doc.acknowledged:
+        content = "stats updated"
+    else:
         content = ""
-        submitted_doc = {}
-        submitted_doc["collection"], submitted_doc["platform"], submitted_doc["component"], submitted_doc["release"], submitted_doc["user"] = \
-                collection, platform, component, release, userid
 
-        inserted_doc = mydb4["usage-event"].insert_one(submitted_doc)
-        if inserted_doc.acknowledged:
-            content = "stats updated"
-        else:
-            content = ""
-
-        return content
+    return content

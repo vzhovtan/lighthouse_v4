@@ -8,7 +8,7 @@
   overflow: hidden;
  }
 
-.container--component_prod {
+.container--feature_prod {
   width: 100%;
   padding-right: 10px;
   padding-left: 10px;
@@ -43,7 +43,7 @@
   cursor: pointer;
 }
 
-.cui .btn.btn--component {
+.cui .btn.btn--feature {
   border: 1px solid transparent;
   background: #34a853;
   color: #fff;
@@ -51,7 +51,7 @@
   text-decoration: none;
 }
 
-.cui .btn.btn--component:hover{
+.cui .btn.btn--feature:hover{
   background:#1B562A;
   -webkit-transform: scale(1.1);
   -ms-transform: scale(1.1);

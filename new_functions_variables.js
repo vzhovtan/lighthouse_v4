@@ -1,4 +1,4 @@
-console.log("new function variables - SEP.10")
+console.log("new function variables - SEP.14")
 //Single file to save all JS vriables
 
 let link = '/api/v2/jobs/lighthouse_v4_new_functions'
@@ -7,6 +7,6 @@ let admin_buttons = ["Final view", "View diff", "Modify", "Approve document", "D
 let user_buttons_all_releases = ["Modify"]
 let user_buttons_rel_independent = ["Modify"]
 let submit_buttons = ["Preview", "Submit", "Cancel"]
-let admin_collection_list = ["ios", "ios-draft", "ios-xr", "ios-xe", "ios-xe-draft", "ios-xr-draft", "cable", "cable-draft", "data-center", "data-center-draft", "nx-os", "nx-os-draft-draft", "mobility", "mobility-draft"]
+let admin_collection_list = ["ios-new", "ios-xr-new", "ios-xe-new", "cable-new", "data-center-new", "nx-os-new", "mobility-new"]
 var collection_data
 var collection_data_diff
