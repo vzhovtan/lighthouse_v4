@@ -1,5 +1,5 @@
-console.log("new function getters - SEP.10")
-   
+console.log("getters.js - SEP.17")
+  
 function get_collection_list(collection_name = "default"){
   //using list of collection from MongoDB
   $("#loading").show()
@@ -49,32 +49,32 @@ function get_platform_list(collection_name, post_data){
   });
 }
 
-function get_component_list(collection_name, platform_name){
-  console.log("get_component_list called --> using collection_data variables saved before")
-  let component_list = []
+function get_feature_list(collection_name, platform_name){
+  console.log("get_feature_list called --> using collection_data variables saved before")
+  let feature_list = []
   collection_data.forEach((item) => {
     if(item.platform == platform_name){
-      if(!component_list.includes(item.component)){
-        component_list.push(item.component)
+      if(!feature_list.includes(item.feature)){
+        feature_list.push(item.feature)
       }
     }  
   })
-  component_list.sort()
-  console.log("Component list", component_list)
+  feature_list.sort()
+  console.log("feature list", feature_list)
   if (!collection_name.includes('draft')){
-    $("#component").append("<button class='btn btn--new' id='" + collection_name + "_" + platform_name + "'>" + "Create new component" + "</button>")
+    $("#feature").append("<button class='btn btn--new' id='" + collection_name + "_" + platform_name + "'>" + "Create new feature" + "</button>")
   }
-  component_list.forEach((item) => {
-    $("#component").append("<button class='btn btn--component' id='" + collection_name + "_" + platform_name + "'>" + item + "</button>")
+  feature_list.forEach((item) => {
+    $("#feature").append("<button class='btn btn--feature' id='" + collection_name + "_" + platform_name + "'>" + item + "</button>")
   })
 }
   
-function get_release_list(collection_name, platform_name, component_name){
+function get_release_list(collection_name, platform_name, feature_name){
   console.log("get_release_list called --> using collection_data variables saved before")
   let release_list = []
   collection_data.forEach((item) => {
     if(item.platform == platform_name){
-      if(item.component == component_name){
+      if(item.feature == feature_name){
         if (!release_list.includes(item.release)){
         release_list.push(item.release)
         }
@@ -85,31 +85,31 @@ function get_release_list(collection_name, platform_name, component_name){
   console.log("Release list", release_list)
   release_list.forEach((item) => {
     if (item.includes("independent")){
-      $("#release").append("<button class='btn btn--independent' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + "Release Independent" + "</button>")
+      $("#release").append("<button class='btn btn--independent' id='" + collection_name + "_" + platform_name + "_" + feature_name + "'>" + "Release Independent" + "</button>")
     }
   })
   release_list.forEach((item) => {
     if (!item.includes("independent")){
-      $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + component_name + "'>" + item + "</button>")
+      $("#release").append("<button class='btn btn--release' id='" + collection_name + "_" + platform_name + "_" + feature_name + "'>" + item + "</button>")
     }
   })
   document.getElementById("release").scrollIntoView();
 }
 
-function get_content(collection_name, platform_name, release_name, component_name){
+function get_content(collection_name, platform_name, release_name, feature_name){
   console.log("get_content called --> using collection_data variables saved before")
-  console.log(collection_name, platform_name, release_name, component_name)
+  console.log(collection_name, platform_name, release_name, feature_name)
   let command_list = []
   let link_list = []
   collection_data.forEach((item) => {
-    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+    if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
       command_list = item.commands
       link_list = item.links
     }  
   })
   $("#current_output").empty()
   $("#current_output_section").show()
-  let output= "<br><h6>" + platform_name + " - " + component_name + " - " + release_name + "</h6><br>"
+  let output= "<br><h6>" + platform_name + " - " + feature_name + " - " + release_name + "</h6><br>"
   if (command_list){
     output += "<br><h6>Command list</h6><br>"
     command_list.forEach((item) => {    
@@ -126,40 +126,40 @@ function get_content(collection_name, platform_name, release_name, component_nam
   if (collection_name.toLowerCase().includes('draft')){
     $("#button_section").show()
     admin_buttons.forEach((item) => {
-      $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "draftcollection" + "'>" + item + "</button>")
+      $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + feature_name + "_" + release_name + "_" + "draftcollection" + "'>" + item + "</button>")
     })
   document.getElementById("current_output_section").scrollIntoView();  
   } else {
     if (release_name.toLowerCase().includes('independent')){
       $("#button_section").show()
       user_buttons_rel_independent.forEach((item) => {
-        $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "independentrelease" + "'>" + item + "</button>")
+        $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + feature_name + "_" + release_name + "_" + "independentrelease" + "'>" + item + "</button>")
       })
     } else {
       $("#button_section").show()
       user_buttons_all_releases.forEach((item) => {
-        $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "regularrelease" + "'>" + item + "</button>")
+        $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + feature_name + "_" + release_name + "_" + "regularrelease" + "'>" + item + "</button>")
       })
     }
   document.getElementById("current_output_section").scrollIntoView();  
-  get_final_view(collection_name, platform_name, component_name,release_name)
-  update_stats (collection_name, platform_name, component_name, release_name)
+  get_final_view(collection_name, platform_name, feature_name,release_name)
+  update_stats (collection_name, platform_name, feature_name, release_name)
   }
 }
 
-function get_final_view(collection_name, platform_name, component_name,release_name){
+function get_final_view(collection_name, platform_name, feature_name,release_name){
   console.log("get_final_view called --> using collection_data variables saved before")
   let content = ""
   let header = "</div><br></div><div align='left'><img src='https://i.imgur.com/f0vBigO.jpg' alt=''></div>"
   let footer = "</div><br></div><div align='left'><a href='mailto:lighthouse-csone@cisco.com?Subject=Lighthouse%20Feedback' target='_top'>comments/questions/feedbacks</a></div><br>"
   let cmd_header = "<div><br><h6>Useful commands for troubleshooting: (some commands syntax could vary according to platform or version)</h6><br><br><div style='width:98%'"
   let link_header = "<br><h6>Support links: (links can become obsolete at any time, send feedback to help maintain accuracy)</h6><br><br>"
-  content += header + "<h6 style='text-align:center'>" + platform_name + " --- " + component_name + " --- " + release_name + " --- " + collection_name  + "</h6>"
+  content += header + "<h6 style='text-align:center'>" + platform_name + " --- " + feature_name + " --- " + release_name + " --- " + collection_name  + "</h6>"
 
   let command_list = []
   let link_list = []
   collection_data.forEach((item) => {
-    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+    if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
       command_list = item.commands
       link_list = item.links
     }  
@@ -207,7 +207,7 @@ function get_final_view(collection_name, platform_name, component_name,release_n
 }  
 
 
-function get_diff(collection_name, platform_name, component_name,release_name){
+function get_diff(collection_name, platform_name, feature_name,release_name){
   console.log("get_diff called - using collection_data variables saved before from draft colleciton and taking similar collection data from production one")
   $("#loading").show()
   clear_all()
@@ -216,12 +216,12 @@ function get_diff(collection_name, platform_name, component_name,release_name){
 
   //taking data from draft collection
   collection_data.forEach((item) => {
-    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+    if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
       new_command_list = item.commands
     }  
   })
   collection_data.forEach((item) => {
-    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+    if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
       new_link_list = item.links
     }  
   })
@@ -256,12 +256,12 @@ function get_diff(collection_name, platform_name, component_name,release_name){
         let current_command_list = []
         let current_link_list = []
         collection_data_diff.forEach((item) => {
-        if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+        if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
           current_command_list = item.commands
           }  
         })
         collection_data_diff.forEach((item) => {
-        if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+        if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
           current_link_list = item.links
           }  
         })
@@ -313,7 +313,7 @@ function get_diff(collection_name, platform_name, component_name,release_name){
         $("#link_section").show()
         $("#button_section").show()
         submit_buttons.forEach((item) => {
-          $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdiff" + "'>" + item + "</button>")
+          $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + feature_name + "_" + release_name + "_" + "getdiff" + "'>" + item + "</button>")
         });
       }  
     });
@@ -325,12 +325,12 @@ function get_diff(collection_name, platform_name, component_name,release_name){
     let current_command_list = []
     let current_link_list = []
     collection_data_diff.forEach((item) => {
-    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+    if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
       current_command_list = item.commands
       }  
     })
     collection_data_diff.forEach((item) => {
-    if(item.platform == platform_name && item.component == component_name && item.release == release_name){
+    if(item.platform == platform_name && item.feature == feature_name && item.release == release_name){
       current_link_list = item.links
       }  
     })
@@ -382,7 +382,7 @@ function get_diff(collection_name, platform_name, component_name,release_name){
     $("#link_section").show()
     $("#button_section").show()
     submit_buttons.forEach((item) => {
-      $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + component_name + "_" + release_name + "_" + "getdiff" + "'>" + item + "</button>")
+      $("#admin_button").append("<button class='btn btn--action'id='" + collection_name + "_" + platform_name + "_" + feature_name + "_" + release_name + "_" + "getdiff" + "'>" + item + "</button>")
     });
   }
 }
