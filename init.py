@@ -5,7 +5,7 @@ from datetime import datetime
 
 def task(env, action, collection="None", platform="None", release="None", feature="None", commands="None", links="None"):
     """
-    Update this docsrting later - TBD
+    Backend engine for Lighthouse v4
     """
     result = bdblib.TaskResult()
 
@@ -21,8 +21,17 @@ def task(env, action, collection="None", platform="None", release="None", featur
         admin_status = get_admin_status(mydb4, userid)
         result.append(admin_status)
     elif backend_action == "get_collection_list":
-        collection_list = get_collection_list(mydb4,userid)
+        collection_list = get_collection_list(mydb4, userid)
         result.append(collection_list)
+    elif backend_action == "get_platform_list":
+        platform_list = get_platform_list(collection, mydb4)
+        result.append(platform_list)    
+    elif backend_action == "get_feature_list":
+        feature_list = get_feature_list(collection, platform, mydb4)
+        result.append(feature_list)
+    elif backend_action == "get_release_list":
+        release_list = get_release_list(collection, platform, feature, mydb4)
+        result.append(release_list)             
     elif backend_action == "get_collection_data":
         collection_data = get_collection_data(collection, mydb4)
         result.append(collection_data) 
@@ -91,6 +100,44 @@ def get_collection_list(mydb4, userid):
     
     result_list.sort()
     return result_list
+
+def get_platform_list(collection, mydb4):
+    """
+    get platform list from mongodb for specific collection
+    """
+    platform_list = []
+    for item in mydb4[collection].find():
+        platform = item['platform']
+        if platform not in platform_list:
+            platform_list.append(platform)
+
+    return platform_list
+
+def get_feature_list(collection, platform, mydb4):
+    """
+    get feature list from mongodb for specific collection/platform
+    """
+    feature_list = []
+    db_dict = {"platform": platform}
+    for item in mydb4[collection].find(db_dict):
+        feature = item['feature']
+        if feature not in feature_list:
+            feature_list.append(feature)
+    
+    return feature_list        
+
+def get_release_list(collection, platform, feature, mydb4):
+    """
+    get release list from mongodb for specific collection/platform/feature
+    """
+    release_list = []
+    db_dict = {"platform": platform, "feature": feature}
+    for item in mydb4[collection].find(db_dict):
+        release = item['release']
+        if release not in release_list:
+            release_list.append(release)
+    
+    return release_list    
 
 def get_collection_data(collection, mydb4):
     """
