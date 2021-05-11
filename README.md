@@ -4,7 +4,7 @@ Lighthouse is developed by Cisco TAC engineers for engineers providing common re
 
 
 Lighthouse is internal project and has been created with idea to use BDB as a backend and JS as frontend on CSOne. V1 and V2 were created purely with JS and all information has been saved in .txt files.
-V3 has been created some to overcome the limitation with scalability and maintainability. However, V4 is needed to accommodate multiple platforms and technology as project is gaining popularity.
+V3 has been created to overcome the limitation with scalability and maintainability. However, V4 is needed to accommodate multiple platforms and technology as project is gaining popularity.
 
  BDB aka Big Data Broker is internal Cisco backend to run custom Python and JS scripts and using MongoDB as database. This version of Lighthouse utilizes MongoDB and saves data in different collections for different platforms. Each entry in DB represents particular feature as a key and contains troubleshooting information as value.
 
